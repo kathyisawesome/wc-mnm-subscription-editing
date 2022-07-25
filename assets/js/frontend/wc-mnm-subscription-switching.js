@@ -25,6 +25,10 @@
 			$( '.woocommerce-MyAccount-content' ).on( 'click', '.mnm_table_container .wcs-switch-link.ajax-switch', this.loadForm );
 			$( '.shop_table' ).on( 'click', '.wc-mnm-cancel-edit', this.cancel );
 			$( '.shop_table' ).on( 'submit', '.mnm_form ', this.updateSubscription );
+
+			$( document.body ).on( 'wc_mnm_subscription_updated_fragments_refreshed', this.scroll );
+			$( document.body ).on( 'wc_mnm_edit_container_in_shop_subscription_cancel', this.scroll );
+			
 		};
 
 		/**
@@ -116,9 +120,8 @@
 			$edit_row.fadeOut().remove();
 			$all_rows.fadeIn();
 
-			$( 'html, body' ).animate( {
-				scrollTop: ( $containerRow.offset().top - 100 )
-			}, 1000 );
+			$( document.body ).trigger( 'wc_mnm_edit_container_in_shop_subscription_cancel' );
+
 		};
 
 
@@ -168,10 +171,6 @@
 
 						$( document.body ).trigger( 'wc_mnm_subscription_updated_fragments_refreshed', [ response.data ] );
 
-						$( 'html, body' ).animate( {
-							scrollTop: ( $( '.shop_table.order_details' ).offset().top - 100 )
-						}, 1000 );
-
 					} else {
 						window.alert( response.data );
 					}
@@ -185,6 +184,15 @@
 				}
 			} );
 
+		};
+
+		/**
+		 * Scroll to totals
+		 */
+		this.scroll = function(e) {
+			$( 'html, body' ).animate( {
+				scrollTop: ( $( '.shop_table.order_details' ).offset().top - 100 )
+			}, 1000 );
 		};
 		  
 		// Launch.
