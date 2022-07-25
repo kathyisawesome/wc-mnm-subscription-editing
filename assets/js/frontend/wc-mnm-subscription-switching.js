@@ -76,7 +76,7 @@
 						$all_rows.fadeOut();
 
 						// Insert display row:
-						let $edit_row = $( `<tr data-subscription_id="${subscription_id}" data-item_id="${item_id}" class="wc-mnm-subscription-edit-row"><td class="" colspan="${columns}" ><div class="wc-mnm-edit-container"></div></td></tr>` ).insertBefore( $containerRow );
+						let $editRow = $( `<tr data-subscription_id="${subscription_id}" data-item_id="${item_id}" class="wc-mnm-subscription-edit-row"><td class="" colspan="${columns}" ><div class="wc-mnm-edit-container"></div></td></tr>` ).insertBefore( $containerRow );
 							
 						$.each( response.data, function( key, value ) {
 							$( key ).replaceWith( value );
@@ -85,7 +85,7 @@
 						// Initilize MNM scripts.
 						if ( response.data[ 'div.wc-mnm-edit-container' ] ) {
 							// Re-attach the replaced result div.
-							let $result = $edit_row.find( '.wc-mnm-edit-container' );
+							let $result = $editRow.find( '.wc-mnm-edit-container' );
 							$result.find( '.mnm_form' ).each( function() {
 								$(this).wc_mnm_form();
 							} );
@@ -113,11 +113,11 @@
 		 */
 		this.cancel = function(e) {
 			e.preventDefault();
-			let $edit_row = $(this).closest( '.wc-mnm-subscription-edit-row' );
-			let $containerRow  = $edit_row.next( '.mnm_table_container' );
+			let $editRow = $(this).closest( '.wc-mnm-subscription-edit-row' );
+			let $containerRow  = $editRow.next( '.mnm_table_container' );
 			let $all_rows       = $containerRow.nextAll( '.mnm_table_item' ).addBack();
 
-			$edit_row.fadeOut().remove();
+			$editRow.fadeOut().remove();
 			$all_rows.fadeIn();
 
 			$( document.body ).trigger( 'wc_mnm_edit_container_in_shop_subscription_cancel' );
