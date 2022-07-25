@@ -2,7 +2,7 @@
 /**
  * Plugin URI: http://www.github.com/kathyisawesome/wc-mnm-subscription-switching
  * Plugin Name: WooCommerce Mix and Match - Subscription Switching
- * Version: 1.0.0-beta-1
+ * Version: 1.0.0-beta-2
  * Description: Mix and Match subscription container contents my account area switching, no cart/checkout
  * Author: Kathy Darling
  * Author URI: http://kathyisawesome.com/
@@ -29,7 +29,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 		/**
 		 * constants
 		 */
-		const VERSION         = '1.0.0-beta-1';
+		const VERSION = '1.0.0-beta-2';
 		const REQ_MNM_VERSION = '2.1.0-beta-1';
 
 		/**

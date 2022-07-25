@@ -1,7 +1,7 @@
 {
   "title": "WooCommerce Mix and Match Products - Subscription Switching",
   "name": "wc-mnm-subscription-switching",
-  "version": "1.0.0-beta-1",
+  "version": "1.0.0-beta-2",
   "description": "Mix and Match subscription contents in-place switching, no cart/checkout",
   "main": "Gruntfile.js",
   "license": "GPL-3.0",
