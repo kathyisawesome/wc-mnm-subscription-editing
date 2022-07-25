@@ -117,8 +117,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 
 		/**
 		 * Make the plugin translation ready
-		 *
-		 * @return void
 		 */
 		public static function load_plugin_textdomain() {
 			load_plugin_textdomain( 'wc-mnm-subscription-switching' , false , dirname( plugin_basename( __FILE__ ) ) .  '/languages/' );
@@ -131,8 +129,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 
 		/**
 		 * Register scripts
-		 *
-		 * @return void
 		 */
 		public static function register_scripts() {
 
