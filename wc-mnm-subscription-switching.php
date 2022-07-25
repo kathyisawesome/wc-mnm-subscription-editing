@@ -29,7 +29,13 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 		/**
 		 * constants
 		 */
-		const VERSION = '1.0.0-beta-1';
+		const VERSION         = '1.0.0-beta-1';
+		const REQ_MNM_VERSION = '2.1.0-beta-1';
+
+		/**
+		 * var string $notice
+		 */
+		private static $notice = '';
 
 		/**
 		 * WC_MNM_Subscription_Switching Constructor
@@ -39,10 +45,25 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 		 */
 		public static function init() {
 
-			// Quietly quit if MNM is not active.
-			if ( ! function_exists( 'wc_mix_and_match' ) ) {
+			// MNM 2.1+ check.
+			if ( ! function_exists( 'wc_mix_and_match' ) || version_compare( wc_mix_and_match()->version, self::REQ_MNM_VERSION ) < 0 ) {
+				self::$notice = __( 'WooCommerce Mix and Match Subscription Switching requires at least WooCommerce Mix and Match Products version <strong>%1$s</strong>. %2$s', 'wc-mnm-subscription-switching' );
+				if ( ! function_exists( 'wc_mix_and_match' ) ) {
+					self::$notice = sprintf( self::$notice, self::REQ_MNM_VERSION, __( 'Please install and activate WooCommerce Mix and Match Products.', 'wc-mnm-subscription-switching' ) );
+				} else {
+					self::$notice = sprintf( self::$notice, self::REQ_MNM_VERSION, __( 'Please update WooCommerce Mix and Match Products.', 'wc-mnm-subscription-switching' ) );
+				}
+
+				add_action( 'admin_notices', [ __CLASS__, 'admin_notice' ] );
 				return false;
 			}
+
+			// APFS check.
+			if ( ! defined( 'WCS_ATT_VERSION' )  ) {
+				self::$notice = __( 'WooCommerce Mix and Match Subscription Switching requires WooCommerce All Products for Subscriptions. Please install and activate WooCommerce All Products for Subscriptions', 'wc-mnm-subscription-switching' );
+				add_action( 'admin_notices', [ __CLASS__, 'admin_notice' ] );
+				return false;
+			}		
 
 			// Load translation files.
 			add_action( 'init', [ __CLASS__, 'load_plugin_textdomain' ] );
@@ -64,7 +85,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 			} else {
 				add_filter( 'woocommerce_subscriptions_switch_link', [ __CLASS__, 'switch_link' ], 99, 4 );
 			}
-			
 
 			// Edit container form - stripped down add to cart form.
 			add_action( 'wc_mnm_edit_container_in_shop_subscription', [ __CLASS__ , 'wc_mnm_template_edit_container' ], 10, 2 );
