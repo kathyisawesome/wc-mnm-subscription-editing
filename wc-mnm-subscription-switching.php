@@ -398,12 +398,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 								apply_filters( 'woocommerce_order_item_name', $child_item->get_name(), $child_item, false )
 							);
 
-							/*
-							$config_html .= sprintf( '%1$d &times; %2$s', 'wc-mnm-subscription-switching', 
-								apply_filters( 'woocommerce_order_item_quantity', $child_item->get_quantity(), $subscription, $child_item ), // show per-container quantity instead?
-								apply_filters( 'woocommerce_order_item_name', $child_item->get_name(), $child_item, false )
-							);
-							*/
 							$config_html .= '</li>';
 						}
 
