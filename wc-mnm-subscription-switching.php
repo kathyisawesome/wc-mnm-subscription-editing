@@ -92,8 +92,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 			add_action( 'wc_mnm_edit_container_in_shop_subscription', [ __CLASS__, 'attach_hooks' ], 0 );
 			add_action( 'wc_mnm_before_edit_container_form', [ __CLASS__ , 'force_container_styles' ] );
 
-			add_action( 'wc_mnm_add_to_cart_script_parameters', [ __CLASS__ , 'add_to_cart_script_parameters' ] );
-
 		}
 
 		/*-----------------------------------------------------------------------------------*/
@@ -605,25 +603,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 		/*-----------------------------------------------------------------------------------*/
 		/* Scripts                                                                           */
 		/*-----------------------------------------------------------------------------------*/
-
-		/**
-		 * Script parameters.
-		 *
-		 * @param  array $params
-		 */
-		public static function add_to_cart_script_parameters( $params ) {
-			return array_merge( $params, [
-					// translators: %v is the current quantity message.
-					'i18n_edit_valid_fixed_message'                  => _x( '%v Update to continue&hellip;', '[Frontend]', 'wc-mnm-subscription-switching' ),
-					// translators: %v is the current quantity message.
-					'i18n_edit_valid_min_message'                    => _x( '%v You can select more or update to continue&hellip;', '[Frontend]', 'wc-mnm-subscription-switching' ),
-					// translators: %v is the current quantity message. %max is the container maximum.
-					'i18n_edit_valid_max_message'                    => _x( '%v You can select up to %max or update to continue&hellip;', '[Frontend]', 'wc-mnm-subscription-switching' ),
-					// translators: %v is the current quantity message. %min is the container minimum. %max is the container maximum.
-					'i18n_edit_valid_range_message'                  => _x( '%v You may select between %min and %max items or update to continue&hellip;', '[Frontend]', 'wc-mnm-subscription-switching' ),
-			] );
-
-		}
 
 		/**
 		 * Form parameters - Switch validation message context.
