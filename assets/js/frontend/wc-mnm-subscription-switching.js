@@ -168,6 +168,10 @@
 
 						$( document.body ).trigger( 'wc_mnm_subscription_updated_fragments_refreshed', [ data.fragments ] );
 
+						$( 'html, body' ).animate( {
+							scrollTop: ( $( '.shop_table.order_details' ).offset().top - 100 )
+						}, 1000 );
+
 					} else {
 						// Display error notices 
 					}
