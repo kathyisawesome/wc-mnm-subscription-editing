@@ -156,10 +156,12 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 			// Frontend scripts.
 			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-			wp_register_script( 'wc-mnm-subscription-switching', plugins_url( '/assets/js/frontend/wc-mnm-subscription-switching' .  $suffix . '.js', __FILE__ ), array( 'wc-add-to-cart-mnm' ), self::VERSION, true );
+			$script_path = '/assets/js/frontend/wc-mnm-subscription-switching' .  $suffix . '.js';
+
+			wp_register_script( 'wc-mnm-subscription-switching', plugins_url( $script_path, __FILE__ ), array( 'wc-add-to-cart-mnm' ), wc_mix_and_match()->get_file_version( self::plugin_path() . $script_path, self::VERSION ), true );
 
 			$params = array(
-				'wc_ajax_url'              => \WC_AJAX::get_endpoint( '%%endpoint%%' ),
+				'wc_ajax_url'               => \WC_AJAX::get_endpoint( '%%endpoint%%' ),
 				'edit_container_nonce'      => wp_create_nonce( 'wc_mnm_edit_container' ),
 				'i18n_edit_failure_message' => _x( 'Server error. Your subscription cannot be edited at this time.', '[Frontend]', 'wc-mnm-subscription-switching' ),
 			);
