@@ -96,6 +96,19 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 
 		}
 
+		/*-----------------------------------------------------------------------------------*/
+		/* Notices */
+		/*-----------------------------------------------------------------------------------*/
+
+
+		/**
+		 * Users must update Mix and Match
+		 */
+		public static function admin_notice() {
+			echo '<div class="notice notice-error">';
+				echo wpautop( self::$notice );
+			echo '</div>';
+		}
 
 		/*-----------------------------------------------------------------------------------*/
 		/* Localization */
