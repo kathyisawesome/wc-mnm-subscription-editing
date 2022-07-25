@@ -40,14 +40,14 @@
 			let subscription_id = url.searchParams.get( 'switch-subscription' );
 			let item_id         = url.searchParams.get( 'item' );
 
-			let $container_row  = $(this).closest( '.mnm_table_container' );
-			let $all_rows       = $container_row.nextAll( '.mnm_table_item' ).addBack();
-			let columns         = $container_row.find( 'td' ).length;
+			let $containerRow  = $(this).closest( '.mnm_table_container' );
+			let $all_rows       = $containerRow.nextAll( '.mnm_table_item' ).addBack();
+			let columns         = $containerRow.find( 'td' ).length;
 
 			// If currently processing... or clicking on same item, quit now.
-			if ( $container_row.is( '.processing' ) ) {
+			if ( $containerRow.is( '.processing' ) ) {
 				return false;
-			} else if ( ! $container_row.is( '.processing' ) ) {
+			} else if ( ! $containerRow.is( '.processing' ) ) {
 				$all_rows.addClass( 'processing' ).block( {
 				message: null,
 				overlayCSS: {
@@ -110,14 +110,14 @@
 		this.cancel = function(e) {
 			e.preventDefault();
 			let $edit_row = $(this).closest( '.wc-mnm-subscription-edit-row' );
-			let $container_row  = $edit_row.next( '.mnm_table_container' );
-			let $all_rows       = $container_row.nextAll( '.mnm_table_item' ).addBack();
+			let $containerRow  = $edit_row.next( '.mnm_table_container' );
+			let $all_rows       = $containerRow.nextAll( '.mnm_table_item' ).addBack();
 
 			$edit_row.fadeOut().remove();
 			$all_rows.fadeIn();
 
 			$( 'html, body' ).animate( {
-				scrollTop: ( $container_row.offset().top - 100 )
+				scrollTop: ( $containerRow.offset().top - 100 )
 			}, 1000 );
 		};
 
