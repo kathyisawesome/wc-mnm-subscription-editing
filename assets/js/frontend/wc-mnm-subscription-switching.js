@@ -63,23 +63,23 @@
 				data: { 
 					item_id: item_id,
 					order_id: subscription_id,
-					security: wc_mnm_subscription_switching_params.edit_container_nonce // @todo get nonce from button? // @todo: test USER owns this sub?
+					security: wc_mnm_subscription_switching_params.edit_container_nonce
 				},
 				success: function( response ) {
 
-					if ( response && 'success' === response.result && response.fragments ) {
+					if ( response.success && response.data ) {
 					
 						$all_rows.fadeOut();
 
 						// Insert display row:
-						let $edit_row = $( `<tr data-subscription_id="${subscription_id}" data-item_id="${item_id}" class="wc-mnm-subscription-edit-row"><td class="" colspan="${columns}" ><div class="wc-mnm-edit-container"></div></td></tr>` ).insertBefore( $container_row );
+						let $edit_row = $( `<tr data-subscription_id="${subscription_id}" data-item_id="${item_id}" class="wc-mnm-subscription-edit-row"><td class="" colspan="${columns}" ><div class="wc-mnm-edit-container"></div></td></tr>` ).insertBefore( $containerRow );
 							
-						$.each( response.fragments, function( key, value ) {
+						$.each( response.data, function( key, value ) {
 							$( key ).replaceWith( value );
 						});
 
 						// Initilize MNM scripts.
-						if ( response.fragments[ 'div.wc-mnm-edit-container' ] ) {
+						if ( response.data[ 'div.wc-mnm-edit-container' ] ) {
 							// Re-attach the replaced result div.
 							let $result = $edit_row.find( '.wc-mnm-edit-container' );
 							$result.find( '.mnm_form' ).each( function() {
@@ -87,7 +87,7 @@
 							} );
 						}
 
-						$( document.body ).trigger( 'wc_mnm_edit_container_in_shop_subscription_fragments_refreshed', [ response.fragments ] );
+						$( document.body ).trigger( 'wc_mnm_edit_container_in_shop_subscription_fragments_refreshed', [ response.data ] );
 
 					} else {
 						location.href = target_url;
@@ -155,25 +155,25 @@
 					security       : wc_mnm_subscription_switching_params.edit_container_nonce,
 					config         : Form.api.get_container_config()
 				},
-				success: function( data ) {
+				success: function( response ) {
 
-					if ( data && 'success' === data.result && data.fragments ) {
+					if ( response.success && response.data ) {
 
 						// Remove the edit form.
 						$editRow.remove();
 								
-						$.each( data.fragments, function( key, value ) {
+						$.each( response.data, function( key, value ) {
 							$( key ).replaceWith( value );
 						});
 
-						$( document.body ).trigger( 'wc_mnm_subscription_updated_fragments_refreshed', [ data.fragments ] );
+						$( document.body ).trigger( 'wc_mnm_subscription_updated_fragments_refreshed', [ response.data ] );
 
 						$( 'html, body' ).animate( {
 							scrollTop: ( $( '.shop_table.order_details' ).offset().top - 100 )
 						}, 1000 );
 
 					} else {
-						// Display error notices 
+						window.alert( response.data );
 					}
 
 				},
@@ -181,7 +181,7 @@
 					$editRow.removeClass( 'processing' ).unblock();
 				},
 				fail: function() {
-					// @todo - show alert if failed?
+					window.alert( wc_mnm_subscription_switching_params.i18n_edit_failure_message );
 				}
 			} );
 
