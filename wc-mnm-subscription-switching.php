@@ -631,7 +631,10 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 		 * @param  array $params
 		 */
 		public static function data_attributes( $atts ) {
-			$atts[ 'context' ] = 'edit';
+			if ( is_wc_endpoint_url( 'view-subscription' ) ) {
+				$atts[ 'context' ] = 'edit';
+			}
+			
 			return $atts;
 		}
 
