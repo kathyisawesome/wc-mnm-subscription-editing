@@ -189,7 +189,7 @@
 		/**
 		 * Scroll to totals
 		 */
-		this.scroll = function(e) {
+		this.scroll = function() {
 			$( 'html, body' ).animate( {
 				scrollTop: ( $( '.shop_table.order_details' ).offset().top - 100 )
 			}, 1000 );
