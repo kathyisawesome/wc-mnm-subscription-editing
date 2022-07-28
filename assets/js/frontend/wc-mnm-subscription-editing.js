@@ -1,10 +1,10 @@
-/* global wc_mnm_subscription_switching_params */
+/* global wc_mnm_subscription_editing_params */
 ;( function( $ ) {
 
 	/**
 	 * Main container object.
 	 */
-	function WC_MNM_Subscription_Switching() {
+	function WC_MNM_Subscription_Editing() {
     
 		/**
 		 * Object initialization.
@@ -22,7 +22,7 @@
 		 * Events.
 		 */
 		this.bind_event_handlers = function() {
-			$( '.woocommerce-MyAccount-content' ).on( 'click', '.mnm_table_container .wcs-switch-link.ajax-switch', this.loadForm );
+			$( '.woocommerce-MyAccount-content' ).on( 'click', '.mnm_table_container .wcs-switch-link.ajax-edit', this.loadForm );
 			$( '.shop_table' ).on( 'click', '.wc-mnm-cancel-edit', this.cancel );
 			$( '.shop_table' ).on( 'submit', '.mnm_form ', this.updateSubscription );
 
@@ -62,12 +62,12 @@
 			}
 
 			$.ajax( {
-				url: wc_mnm_subscription_switching_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'mnm_get_container_order_item_edit_form' ),
+				url: wc_mnm_subscription_editing_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'mnm_get_container_order_item_edit_form' ),
 				type: 'POST',
 				data: { 
 					item_id: item_id,
 					order_id: subscription_id,
-					security: wc_mnm_subscription_switching_params.edit_container_nonce
+					security: wc_mnm_subscription_editing_params.edit_container_nonce
 				},
 				success: function( response ) {
 
@@ -149,13 +149,13 @@
 			}
 
 			$.ajax( {
-				url: wc_mnm_subscription_switching_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'mnm_update_container_subscription' ),
+				url: wc_mnm_subscription_editing_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'mnm_update_container_subscription' ),
 				type: 'POST',
 				data: {
 					order_id       : $editRow.data( 'subscription_id' ),
 					subscription_id: $editRow.data( 'subscription_id' ),
 					item_id        : $editRow.data( 'item_id' ),
-					security       : wc_mnm_subscription_switching_params.edit_container_nonce,
+					security       : wc_mnm_subscription_editing_params.edit_container_nonce,
 					config         : Form.api.get_container_config()
 				},
 				success: function( response ) {
@@ -180,7 +180,7 @@
 					$editRow.removeClass( 'processing' ).unblock();
 				},
 				fail: function() {
-					window.alert( wc_mnm_subscription_switching_params.i18n_edit_failure_message );
+					window.alert( wc_mnm_subscription_editing_params.i18n_edit_failure_message );
 				}
 			} );
 
@@ -198,13 +198,13 @@
 		// Launch.
 		this.initialize();
   
-	} // End WC_MNM_Subscription_Switching.
+	} // End WC_MNM_Subscription_Editing.
   
 	/*-----------------------------------------------------------------*/
 	/*  Initialization.                                                */
 	/*-----------------------------------------------------------------*/
   
-	new WC_MNM_Subscription_Switching( $(this) );
+	new WC_MNM_Subscription_Editing( $(this) );
 	  
 } ) ( jQuery );
   

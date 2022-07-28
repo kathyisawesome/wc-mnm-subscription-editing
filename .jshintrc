@@ -22,8 +22,6 @@
 		"jQuery": false,
 		"JSON": false,
 		"wp": false,
-		"wc_mnm_params": false,
-		"wc_mnm_price_params": false,
-		"wc_mnm_price_format": false
+		"wc_mnm_subscription_editing_params": false
 	}
 }

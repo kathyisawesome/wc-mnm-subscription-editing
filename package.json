@@ -1,16 +1,16 @@
 {
-  "title": "WooCommerce Mix and Match Products - Subscription Switching",
-  "name": "wc-mnm-subscription-switching",
+  "title": "WooCommerce Mix and Match Products - Subscription Editing",
+  "name": "",
   "version": "1.0.0-beta-2",
-  "description": "Mix and Match subscription contents in-place switching, no cart/checkout",
+  "description": "Mix and Match subscription contents editing in My Account area, no cart/checkout",
   "main": "Gruntfile.js",
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kathyisawesome/wc-mnm-subscription-switching"
+    "url": "https://github.com/kathyisawesome/wc-mnm-subscription-editing"
   },
   "bugs": {
-    "url": "https://github.com/kathyisawesome/wc-mnm-subscription-switching/issues"
+    "url": "https://github.com/kathyisawesome/wc-mnm-subscription-editing/issues"
   },
   "author": "helgatheviking",
   "devDependencies": {

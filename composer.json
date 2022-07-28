@@ -1,7 +1,7 @@
 {
-    "name": "kathyisawesome/wc-mnm-subscription-switching",
-    "description": "Mix and Match subscription contents in-place switching, no cart/checkout.",
-    "homepage": "https://github.com/kathyisawesome/wc-mnm-subscription-switching",
+    "name": "kathyisawesome/wc-mnm-subscription-editing",
+    "description": "Mix and Match subscription contents in-place editing, no cart/checkout.",
+    "homepage": "https://github.com/kathyisawesome/wc-mnm-subscription-editing",
     "type": "wordpress-plugin",
     "license": "GPL-3.0-or-later"
 }

@@ -1,30 +1,30 @@
 <?php
 /**
- * Plugin URI: http://www.github.com/kathyisawesome/wc-mnm-subscription-switching
- * Plugin Name: WooCommerce Mix and Match - Subscription Switching
+ * Plugin URI: http://www.github.com/kathyisawesome/wc-mnm-subscription-editing
+ * Plugin Name: WooCommerce Mix and Match - Subscription Editing
  * Version: 1.0.0-beta-2
- * Description: Mix and Match subscription container contents my account area switching, no cart/checkout
+ * Description: Mix and Match subscription container contents editing in the my account area, no cart/checkout
  * Author: Kathy Darling
  * Author URI: http://kathyisawesome.com/
  * Developer: Kathy Darling
  * Developer URI: http://kathyisawesome.com/
- * Text Domain: wc-mnm-subscription-switching
+ * Text Domain: wc-mnm-subscription-editing
  * Domain Path: /languages
  * 
- * GitHub Plugin URI: https://github.com/kathyisawesome/wc-mnm-subscription-switching
+ * GitHub Plugin URI: https://github.com/kathyisawesome/wc-mnm-subscription-editing
  * Release Asset: true
  *
- * Copyright: © 2020 Kathy Darling
+ * Copyright: © 2022 Kathy Darling
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
  */
 
 /**
- * The Main WC_MNM_Subscription_Switching class
+ * The Main WC_MNM_Subscription_Editing class
  **/
-if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
+if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
-	class WC_MNM_Subscription_Switching {
+	class WC_MNM_Subscription_Editing {
 
 		/**
 		 * constants
@@ -38,20 +38,20 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 		private static $notice = '';
 
 		/**
-		 * WC_MNM_Subscription_Switching Constructor
+		 * WC_MNM_Subscription_Editing Constructor
 		 *
 		 * @access 	public
-		 * @return 	WC_MNM_Subscription_Switching
+		 * @return 	WC_MNM_Subscription_Editing
 		 */
 		public static function init() {
 
 			// MNM 2.1+ check.
 			if ( ! function_exists( 'wc_mix_and_match' ) || version_compare( wc_mix_and_match()->version, self::REQ_MNM_VERSION ) < 0 ) {
-				self::$notice = __( 'WooCommerce Mix and Match Subscription Switching requires at least WooCommerce Mix and Match Products version <strong>%1$s</strong>. %2$s', 'wc-mnm-subscription-switching' );
+				self::$notice = __( 'WooCommerce Mix and Match Subscription Editing requires at least WooCommerce Mix and Match Products version <strong>%1$s</strong>. %2$s', 'wc-mnm-subscription-editing' );
 				if ( ! function_exists( 'wc_mix_and_match' ) ) {
-					self::$notice = sprintf( self::$notice, self::REQ_MNM_VERSION, __( 'Please install and activate WooCommerce Mix and Match Products.', 'wc-mnm-subscription-switching' ) );
+					self::$notice = sprintf( self::$notice, self::REQ_MNM_VERSION, __( 'Please install and activate WooCommerce Mix and Match Products.', 'wc-mnm-subscription-editing' ) );
 				} else {
-					self::$notice = sprintf( self::$notice, self::REQ_MNM_VERSION, __( 'Please update WooCommerce Mix and Match Products.', 'wc-mnm-subscription-switching' ) );
+					self::$notice = sprintf( self::$notice, self::REQ_MNM_VERSION, __( 'Please update WooCommerce Mix and Match Products.', 'wc-mnm-subscription-editing' ) );
 				}
 
 				add_action( 'admin_notices', [ __CLASS__, 'admin_notice' ] );
@@ -60,7 +60,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 
 			// APFS check.
 			if ( ! defined( 'WCS_ATT_VERSION' )  ) {
-				self::$notice = __( 'WooCommerce Mix and Match Subscription Switching requires WooCommerce All Products for Subscriptions. Please install and activate WooCommerce All Products for Subscriptions', 'wc-mnm-subscription-switching' );
+				self::$notice = __( 'WooCommerce Mix and Match Subscription Editing requires WooCommerce All Products for Subscriptions. Please install and activate WooCommerce All Products for Subscriptions', 'wc-mnm-subscription-editing' );
 				add_action( 'admin_notices', [ __CLASS__, 'admin_notice' ] );
 				return false;
 			}		
@@ -117,7 +117,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 		 * Make the plugin translation ready
 		 */
 		public static function load_plugin_textdomain() {
-			load_plugin_textdomain( 'wc-mnm-subscription-switching' , false , dirname( plugin_basename( __FILE__ ) ) .  '/languages/' );
+			load_plugin_textdomain( 'wc-mnm-subscription-editing' , false , dirname( plugin_basename( __FILE__ ) ) .  '/languages/' );
 		}
 
 
@@ -156,17 +156,17 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 			// Frontend scripts.
 			$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-			$script_path = '/assets/js/frontend/wc-mnm-subscription-switching' .  $suffix . '.js';
+			$script_path = '/assets/js/frontend/wc-mnm-subscription-editing' .  $suffix . '.js';
 
-			wp_register_script( 'wc-mnm-subscription-switching', plugins_url( $script_path, __FILE__ ), array( 'wc-add-to-cart-mnm' ), wc_mix_and_match()->get_file_version( self::plugin_path() . $script_path, self::VERSION ), true );
+			wp_register_script( 'wc-mnm-subscription-editing', plugins_url( $script_path, __FILE__ ), array( 'wc-add-to-cart-mnm' ), wc_mix_and_match()->get_file_version( self::plugin_path() . $script_path, self::VERSION ), true );
 
 			$params = array(
 				'wc_ajax_url'               => \WC_AJAX::get_endpoint( '%%endpoint%%' ),
 				'edit_container_nonce'      => wp_create_nonce( 'wc_mnm_edit_container' ),
-				'i18n_edit_failure_message' => _x( 'Server error. Your subscription cannot be edited at this time.', '[Frontend]', 'wc-mnm-subscription-switching' ),
+				'i18n_edit_failure_message' => _x( 'Server error. Your subscription cannot be edited at this time.', '[Frontend]', 'wc-mnm-subscription-editing' ),
 			);
 
-			wp_localize_script( 'wc-mnm-subscription-switching', 'wc_mnm_subscription_switching_params', $params );
+			wp_localize_script( 'wc-mnm-subscription-editing', 'wc_mnm_subscription_editing_params', $params );
 
 		}
 
@@ -177,7 +177,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 		public static function load_scripts() {
 			wp_enqueue_script( 'jquery-blockui' );
 			wp_enqueue_script( 'wc-add-to-cart-mnm' );
-			wp_enqueue_script( 'wc-mnm-subscription-switching' );
+			wp_enqueue_script( 'wc-mnm-subscription-editing' );
 		}
 
 
@@ -233,12 +233,12 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 			try {
 
 				if ( ! check_ajax_referer( 'wc_mnm_edit_container', 'security', false ) ) {
-					$error = esc_html__( 'Security failure', 'wc-mnm-subscription-switching' );
+					$error = esc_html__( 'Security failure', 'wc-mnm-subscription-editing' );
 					throw new Exception( $error );
 				}
 
 				if ( empty( $_POST['order_id'] ) || empty( $_POST['item_id'] ) ) {
-					$error = esc_html__( 'Missing order ID or item ID', 'wc-mnm-subscription-switching' );
+					$error = esc_html__( 'Missing order ID or item ID', 'wc-mnm-subscription-editing' );
 					throw new Exception( $error );
 				}
 
@@ -246,31 +246,31 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 				$item_id = absint( wc_clean( $_POST['item_id'] ) );
 
 				if ( ! ( $order instanceof WC_Order ) ) {
-					$error = esc_html__( 'Not a valid order', 'wc-mnm-subscription-switching' );
+					$error = esc_html__( 'Not a valid order', 'wc-mnm-subscription-editing' );
 					throw new Exception( $error );
 				}
 
 				if ( ! current_user_can( 'switch_shop_subscription', $order->get_id() ) ) {
-					$error = esc_html__( 'You do not have authority to edit this subscription', 'wc-mnm-subscription-switching' );
+					$error = esc_html__( 'You do not have authority to edit this subscription', 'wc-mnm-subscription-editing' );
 					throw new Exception( $error );
 				}
 
 				$order_item = $order->get_item( $item_id );
 
 				if ( ! ( $order_item instanceof WC_Order_Item ) ) {
-					$error = esc_html__( 'Not a valid order item', 'wc-mnm-subscription-switching' );
+					$error = esc_html__( 'Not a valid order item', 'wc-mnm-subscription-editing' );
 					throw new Exception( $error );
 				}
 
 				$product = $order_item->get_product();
 
 				if ( ! ( $product instanceof WC_Product_Mix_and_Match ) ) {
-					$error = esc_html__( 'Product is not mix and match type and so cannot be edited', 'wc-mnm-subscription-switching' );
+					$error = esc_html__( 'Product is not mix and match type and so cannot be edited', 'wc-mnm-subscription-editing' );
 					throw new Exception( $error );
 				}
 
 				if ( ! $product->has_child_items() ) {
-					$error = esc_html__( 'Container product does not have any available child items', 'wc-mnm-subscription-switching' );
+					$error = esc_html__( 'Container product does not have any available child items', 'wc-mnm-subscription-editing' );
 					throw new Exception( $error );
 				}
 
@@ -283,7 +283,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 			} catch ( Exception $e ) {
 
 				// translators: %s is the validation error message.
-				$error = sprintf( esc_html__( 'Cannot edit this mix and match subscription. Reason: %s.', 'wc-mnm-subscription-switching' ), $e->getMessage() );
+				$error = sprintf( esc_html__( 'Cannot edit this mix and match subscription. Reason: %s.', 'wc-mnm-subscription-editing' ), $e->getMessage() );
 	
 				return new WP_Error( 'mnm_edit_subscription_failure', $error );
 	
@@ -324,17 +324,17 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 			$subscription = wcs_get_subscription( $order );
 
 			if ( ! $subscription ) {
-				$error = esc_html__( 'Not a valid subscription', 'wc-mnm-subscription-switching' );
+				$error = esc_html__( 'Not a valid subscription', 'wc-mnm-subscription-editing' );
 				wp_send_json_error( $error );
 			}
 
 			if ( ! WCS_ATT_Product::supports_feature( $product, 'subscription_content_switching' ) ) {
-				$error = esc_html__( 'Does not support contents switching', 'wc-mnm-subscription-switching' );
+				$error = esc_html__( 'Does not support contents switching', 'wc-mnm-subscription-editing' );
 				wp_send_json_error( $error );
 			}
 
 			if ( ! isset( $_POST[ 'config' ] ) ) {
-				$error = esc_html__( 'No configuration found', 'wc-mnm-subscription-switching' );
+				$error = esc_html__( 'No configuration found', 'wc-mnm-subscription-editing' );
 				wp_send_json_error( $error );
 
 			} else {
@@ -395,7 +395,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 
 							// translators: %1$d is the configured child product quantity and %1$s is the configured child product title
 							$config_html .= '<li>';
-							$config_html .= sprintf( __( '%1$d &times; %2$s', 'wc-mnm-subscription-switching' ), 
+							$config_html .= sprintf( __( '%1$d &times; %2$s', 'wc-mnm-subscription-editing' ), 
 								apply_filters( 'woocommerce_order_item_quantity', $child_item->get_quantity(), $subscription, $child_item ), // show per-container quantity instead?
 								apply_filters( 'woocommerce_order_item_name', $child_item->get_name(), $child_item, false )
 							);
@@ -407,7 +407,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 			
 					}
 
-					$subscription->add_order_note( sprintf( __( 'Customer modified selections for "%1$s" subscription via the My Account page.<br/><strong>New Configuration</strong>%2$s', 'wc-mnm-subscription-switching' ), $product->get_name(), $config_html ) );
+					$subscription->add_order_note( sprintf( __( 'Customer modified selections for "%1$s" subscription via the My Account page.<br/><strong>New Configuration</strong>%2$s', 'wc-mnm-subscription-editing' ), $product->get_name(), $config_html ) );
 
 					// Update totals.
 					$subscription->calculate_totals();
@@ -423,7 +423,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 					wp_send_json_success( $fragments );
 
 				} else {
-					$error = is_wp_error( $new_container_item_id ) ? $new_container_item_id->get_error_message() : esc_html__( 'Items could not be added to subscription', 'wc-mnm-subscription-switching' );
+					$error = is_wp_error( $new_container_item_id ) ? $new_container_item_id->get_error_message() : esc_html__( 'Items could not be added to subscription', 'wc-mnm-subscription-editing' );
 					wp_send_json_error( $error );
 				}
 
@@ -457,7 +457,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 				$prorate_virtual = in_array( $apportion_recurring_price, array( 'virtual', 'virtual-upgrade' ) );
 		
 				if ( 'no' === $apportion_recurring_price || ( $prorate_virtual && ! $switch_item->is_virtual_product() ) ) {
-					$classes[] = 'ajax-switch';
+					$classes[] = 'ajax-edit';
 				}
 			}
 
@@ -483,7 +483,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 				$prorate_virtual = in_array( $apportion_recurring_price, array( 'virtual', 'virtual-upgrade' ) );
 		
 				if ( 'no' === $apportion_recurring_price || ( $prorate_virtual && ! $switch_item->is_virtual_product() ) ) {
-					$switch_link = str_replace( 'class="', 'class="ajax-switch ', $switch_link );
+					$switch_link = str_replace( 'class="', 'class="ajax-edit ', $switch_link );
 				}
 			}
 
@@ -553,7 +553,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 					'order_item' => $order_item,
 					'order'      => $order,
 					'container'  => $order_item->get_product(),
-					'button_text' => apply_filters( 'wc_mnm_edit_container_button_text', __( 'Update container', 'wc-mnm-subscription-switching' ), $order_item, $order ),
+					'button_text' => apply_filters( 'wc_mnm_edit_container_button_text', __( 'Update container', 'wc-mnm-subscription-editing' ), $order_item, $order ),
 				),
 				'',
 				self::plugin_path() . '/templates/'
@@ -588,7 +588,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 		 * @return string
 		 */
 		public static function update_container_text( $text ) {
-			return esc_html__( 'Update subscription', 'wc-mnm-subscription-switching' );
+			return esc_html__( 'Update subscription', 'wc-mnm-subscription-editing' );
 		}
 
 		/**
@@ -597,7 +597,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 		 * @param  WC_Order_Item_Product $order_item
 		 */
 		public static function edit_subscription_headling( $order_item ) {
-			echo '<h3>' . sprintf( esc_html__( 'Edit selections for "%s"', 'wc-mnm-subscription-switching' ), $order_item->get_name() ) . '</h3>';
+			echo '<h3>' . sprintf( esc_html__( 'Edit selections for "%s"', 'wc-mnm-subscription-editing' ), $order_item->get_name() ) . '</h3>';
 		}
 
 
@@ -609,7 +609,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 		public static function cancel_edit_link( $order_item ) {
 			global $product;
 			// translators: %1$s Screen reader text opening <span> %2$s Product title %3$s Closing </span>
-			$cancel_text = sprintf( esc_html_x( 'Cancel edit %1$soptions for %2$s%3$s', 'edit subscription cancel link text', 'wc-mnm-subscription-switching' ),
+			$cancel_text = sprintf( esc_html_x( 'Cancel edit %1$soptions for %2$s%3$s', 'edit subscription cancel link text', 'wc-mnm-subscription-editing' ),
 				'<span class="screen-reader-text">',
 				$order_item->get_name(),
 				'</span>'
@@ -654,4 +654,4 @@ if ( ! class_exists( 'WC_MNM_Subscription_Switching' ) ) :
 endif; // end class_exists check
 
 // Launch the whole plugin.
-add_action( 'plugins_loaded', [ 'WC_MNM_Subscription_Switching', 'init' ], 20 );
+add_action( 'plugins_loaded', [ 'WC_MNM_Subscription_Editing', 'init' ], 20 );
