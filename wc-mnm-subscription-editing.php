@@ -30,7 +30,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		 * constants
 		 */
 		const VERSION = '1.0.0-beta-2';
-		const REQ_MNM_VERSION = '2.1.0-beta-1';
+		const REQ_MNM_VERSION = '2.1.0';
 
 		/**
 		 * var string $notice
