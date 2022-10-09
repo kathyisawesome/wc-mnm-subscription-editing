@@ -195,7 +195,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 			if ( is_wp_error( $result ) ) {
 				// translators: %s is the validation error message.
-				$error = sprintf( esc_html__( 'Cannot edit this mix and match subscription. Reason: %s.', 'woocommerce-mix-and-match-products' ), $result->get_error_message() );
+				$error = sprintf( esc_html__( 'Cannot edit this mix and match subscription. Reason: %s.', 'wc-mnm-subscription-editing' ), $result->get_error_message() );
 				wp_send_json_error( $error );
 			}
 
@@ -314,7 +314,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 			if ( is_wp_error( $result ) ) {
 				// translators: %s is the validation error message.
-				$error = sprintf( esc_html__( 'Cannot edit this mix and match subscription. Reason: %s.', 'woocommerce-mix-and-match-products' ), $result->get_error_message() );
+				$error = sprintf( esc_html__( 'Cannot edit this mix and match subscription. Reason: %s.', 'wc-mnm-subscription-editing' ), $result->get_error_message() );
 				wp_send_json_error( $error );
 			}
 
