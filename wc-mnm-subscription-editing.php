@@ -649,10 +649,9 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		 * @param  array $params
 		 */
 		public static function data_attributes( $atts ) {
-			if ( is_wc_endpoint_url( 'view-subscription' ) ) {
+			if ( wp_doing_ajax() && isset( $_POST[ 'wc_mnm_get_container_edit_form' ] ) ){
 				$atts[ 'context' ] = 'edit';
-			}
-			
+			}			
 			return $atts;
 		}
 

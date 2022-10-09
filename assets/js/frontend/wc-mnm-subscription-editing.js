@@ -64,7 +64,8 @@
 			$.ajax( {
 				url: wc_mnm_subscription_editing_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'mnm_get_container_order_item_edit_form' ),
 				type: 'POST',
-				data: { 
+				data: {
+					wc_mnm_get_container_edit_form: true,
 					item_id: item_id,
 					order_id: subscription_id,
 					security: wc_mnm_subscription_editing_params.edit_container_nonce
