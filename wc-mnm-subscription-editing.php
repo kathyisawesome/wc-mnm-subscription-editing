@@ -517,6 +517,22 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 				return;
 			}
 
+			$classes = array( 
+				'mnm_form',
+				'cart',
+				'cart_group',
+				'edit_container',
+				'layout_' . $product->get_layout(),
+			);
+		
+			/**
+			 * Form classes.
+			 *
+			 * @param array - The classes that will print in the <form> tag.
+			 * @param obj $product WC_Mix_And_Match of parent product
+			 */
+			$classes = apply_filters( 'wc_mnm_form_classes', $classes, $product );
+
 			// Enqueue scripts and styles - then, initialize js variables.
 			wp_enqueue_script( 'wc-add-to-cart-mnm' );
 			wp_enqueue_style( 'wc-mnm-frontend' );
@@ -528,6 +544,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 					'order_item' => $order_item,
 					'order'      => $order,
 					'container'  => $order_item->get_product(),
+					'classes'    => $classes,
 				),
 				'',
 				self::plugin_path() . '/templates/'
