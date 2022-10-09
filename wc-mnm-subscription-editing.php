@@ -30,7 +30,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		 * constants
 		 */
 		const VERSION = '1.0.0-beta-2';
-		const REQ_MNM_VERSION = '2.1.0';
+		const REQ_MNM_VERSION = '2.2.0-beta-1';
 
 		/**
 		 * var string $notice
@@ -211,7 +211,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 			ob_start();
 			echo '<div class="wc-mnm-edit-container wc-mnm-edit-container-' . $order->get_type() . '">'; // Restore wrapping class as fragments replaces it.
-			do_action( 'wc_mnm_edit_container_in_' . $order->get_type(), $order_item, $order ); // @todo - should be order item?
+			do_action( 'wc_mnm_edit_container_in_' . $order->get_type(), $order_item, $order );
 			echo '</div>';
 
 			$form = ob_get_clean();
@@ -264,8 +264,8 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 				$product = $order_item->get_product();
 
-				if ( ! ( $product instanceof WC_Product_Mix_and_Match ) ) {
-					$error = esc_html__( 'Product is not mix and match type and so cannot be edited', 'wc-mnm-subscription-editing' );
+				if ( ! wc_mnm_is_product_container_type( $product ) ) {
+					$error = esc_html__( 'Product is not mix and match container type and so cannot be edited', 'wc-mnm-subscription-editing' );
 					throw new Exception( $error );
 				}
 
@@ -451,7 +451,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 			$product = $switch_item->get_product();
 
-			if ( $product->is_type( 'mix-and-match' ) ) {
+			if ( wc_mnm_is_product_container_type( $product ) ) {
 				$apportion_recurring_price = get_option( WC_Subscriptions_Admin::$option_prefix . '_apportion_recurring_price', 'no' );
 
 				$prorate_virtual = in_array( $apportion_recurring_price, array( 'virtual', 'virtual-upgrade' ) );
@@ -477,7 +477,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 			$product = $switch_item->get_product();
 
-			if ( $product->is_type( 'mix-and-match' ) ) {
+			if ( wc_mnm_is_product_container_type( $product ) ) {
 				$apportion_recurring_price = get_option( WC_Subscriptions_Admin::$option_prefix . '_apportion_recurring_price', 'no' );
 
 				$prorate_virtual = in_array( $apportion_recurring_price, array( 'virtual', 'virtual-upgrade' ) );
@@ -513,7 +513,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 				$product = $container;
 			}
 
-			if ( ! $product || ! $product->is_type( 'mix-and-match' ) ) {
+			if ( ! $product || ! wc_mnm_is_product_container_type( $product ) ) {
 				return;
 			}
 
