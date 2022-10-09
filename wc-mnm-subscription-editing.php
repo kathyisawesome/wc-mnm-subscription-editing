@@ -542,10 +542,11 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		/**
 		 * Edit container template for Mix and Match products.
 		 * 
+		 * @param WC_Mix_and_Match_Product $product
 		 * @param WC_Order_Item $order_item
 		 * @param WC_Order $order
 		 */
-		public static function wc_mnm_template_edit_container_button( $order_item, $order ) {
+		public static function wc_mnm_template_edit_container_button( $product, $order_item, $order ) {
 			// Load the edit container template.
 			wc_get_template(
 				'edit-order/update-container-button.php',
@@ -576,8 +577,12 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			// Add headings and button texts.
 			add_filter( 'wc_mnm_edit_container_button_text', [ __CLASS__, 'update_container_text' ] );
 			add_action( 'wc_mnm_before_edit_container_form', [ __CLASS__, 'edit_subscription_headling' ] );
-			add_action( 'wc_mnm_edit_container_button', [ __CLASS__, 'wc_mnm_template_edit_container_button' ], 10, 2 );
-			add_action( 'wc_mnm_edit_container_button', [ __CLASS__, 'cancel_edit_link' ], 20 );
+			add_action( 'wc_mnm_edit_container_content', 'wc_mnm_content_loop', 10 );
+			add_action( 'wc_mnm_edit_container_content', 'wc_mnm_template_reset_link', 20 );
+		
+			add_action( 'wc_mnm_edit_container_content', 'wc_mnm_template_container_status', 30 );
+			add_action( 'wc_mnm_edit_container_content', [ __CLASS__, 'wc_mnm_template_edit_container_button' ], 40, 3 );
+			add_action( 'wc_mnm_edit_container_content', [ __CLASS__, 'cancel_edit_link' ], 50 );
 			add_filter( 'wc_mnm_container_data_attributes', [ __CLASS__, 'data_attributes' ] );
 		}
 
