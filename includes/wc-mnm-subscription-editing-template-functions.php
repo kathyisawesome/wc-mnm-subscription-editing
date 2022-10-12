@@ -96,6 +96,74 @@ if ( ! function_exists( 'wc_mnm_template_edit_simple_container' ) ) {
 
 }
 
+
+if ( ! function_exists( 'wc_mnm_template_edit_variable_container' ) ) {
+
+	/**
+	 * Edit container template for Mix and Match products.
+	 * 
+	 * @param WC_Order_Item $order_item
+	 * @param WC_Order $order
+	 */
+	function wc_mnm_template_edit_variable_container( $order_item, $order ) {
+
+		if ( $order_item instanceof WC_Order_Item_Product ) {
+			// Need to get the parent product object in this case.
+			$product = apply_filters( 'woocommerce_order_item_product', wc_get_product( $order_item->get_product_id() ), $order_item );
+		}
+
+		// Setup globals $product.
+		$product = is_object( $product ) && $product->is_type( 'variable-mix-and-match' ) ? wc_setup_product_data( $product->get_id() ) : false;
+
+		if ( ! $product ) {
+			return;
+		}
+
+		$classes = array(
+			'variations_form',
+			'variable_mnm_form',
+			'mnm_form',
+			'cart',
+			'cart_group',
+			'edit_container',
+			'layout_' . $product->get_layout(),
+		);
+
+		/**
+		 * Form classes.
+		 *
+		 * @param array - The classes that will print in the <form> tag.
+		 * @param obj $product WC_Mix_And_Match of parent product
+		 */
+		$classes = apply_filters( 'wc_mnm_edit_form_classes', $classes, $product );
+
+		// Enqueue scripts and styles - then, initialize js variables.
+		wp_enqueue_script( 'wc-add-to-cart-mnm' );
+		wp_enqueue_style( 'wc-mnm-frontend' );
+
+		// Get Available variations?
+		$get_variations = count( $product->get_children() ) <= apply_filters( 'woocommerce_ajax_variation_threshold', 30, $product );
+			
+		wc_get_template(
+			'edit-order/edit-variable-mix-and-match.php',
+			array(
+				'order_item' => $order_item,
+				'order'      => $order,
+				'container'  => $product,
+				'classes'    => $classes,
+				'available_variations' => $get_variations ? $product->get_available_variations() : false,
+				'attributes'           => $product->get_variation_attributes(),
+				'selected_attributes'  => $product->get_default_attributes(),
+				'classes'              => $classes,
+			),
+			'',
+			WC_MNM_Subscription_Editing::plugin_path() . '/templates/'
+		);
+
+	}
+
+}
+
 if ( ! function_exists( 'wc_mnm_template_edit_container_button' ) ) {
 	/**
 	 * Edit container template for Mix and Match products.
