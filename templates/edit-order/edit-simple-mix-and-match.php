@@ -43,7 +43,7 @@ do_action( 'wc_mnm_before_edit_container_form', $product, $order_item, $order );
 	 * @hooked wc_mnm_content_loop - 10
 	 * @hooked wc_mnm_template_reset_link         - 20
 	 * @hooked wc_mnm_template_container_status   - 30
-	 * @hooked WC_MNM_Subscription_Editing::wc_mnm_template_edit_container_button - 40
+	 * @hooked wc_mnm_template_edit_container_button - 40
 	 */
 	do_action( 'wc_mnm_edit_container_content', $product, $order_item, $order );
 
