@@ -60,7 +60,7 @@ if ( ! function_exists( 'wc_mnm_template_edit_container' ) ) {
 		wp_enqueue_style( 'wc-mnm-frontend' );
 			
 		wc_get_template(
-			'edit-order/edit-container.php',
+			'edit-order/edit-simple-mix-and-match.php',
 			array(
 				'order_item' => $order_item,
 				'order'      => $order,
