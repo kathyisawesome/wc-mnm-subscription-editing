@@ -58,6 +58,13 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 				return false;
 			}
 
+			// Sub check.
+			if ( ! class_exists( 'WC_Subscriptions_Plugin' )  ) {
+				self::$notice = __( 'WooCommerce Mix and Match Subscription Editing requires WooCommerce Subscriptions. Please install and activate WooCommerce Subscriptions', 'wc-mnm-subscription-editing' );
+				add_action( 'admin_notices', [ __CLASS__, 'admin_notice' ] );
+				return false;
+			}	
+
 			// APFS check.
 			if ( ! defined( 'WCS_ATT_VERSION' )  ) {
 				self::$notice = __( 'WooCommerce Mix and Match Subscription Editing requires WooCommerce All Products for Subscriptions. Please install and activate WooCommerce All Products for Subscriptions', 'wc-mnm-subscription-editing' );
