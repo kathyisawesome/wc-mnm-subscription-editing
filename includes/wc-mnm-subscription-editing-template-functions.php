@@ -20,6 +20,24 @@ if ( ! function_exists( 'wc_mnm_template_edit_container' ) ) {
 	 * @param WC_Order $order
 	 */
 	function wc_mnm_template_edit_container( $order_item, $order ) {
+		if ( $order_item->get_variation_id() ) {
+			do_action( 'wc_mnm_edit_variable_container', $order_item, $order );
+		} else {
+			do_action( 'wc_mnm_edit_simple_container', $order_item, $order );
+		}
+	}
+
+}
+
+if ( ! function_exists( 'wc_mnm_template_edit_simple_container' ) ) {
+
+	/**
+	 * Edit container template for Mix and Match products.
+	 * 
+	 * @param WC_Order_Item $order_item
+	 * @param WC_Order $order
+	 */
+	function wc_mnm_template_edit_simple_container( $order_item, $order ) {
 
 		global $product;
 		$backup_product = $product;
