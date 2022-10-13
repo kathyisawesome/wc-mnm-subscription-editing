@@ -64,10 +64,6 @@ if ( ! function_exists( 'wc_mnm_template_edit_simple_container' ) ) {
 		 * @param obj $product WC_Mix_And_Match of parent product
 		 */
 		$classes = apply_filters( 'wc_mnm_edit_form_classes', $classes, $product );
-
-		// Enqueue scripts and styles - then, initialize js variables.
-		wp_enqueue_script( 'wc-add-to-cart-mnm' );
-		wp_enqueue_style( 'wc-mnm-frontend' );
 			
 		wc_get_template(
 			'edit-order/edit-simple-mix-and-match.php',
@@ -121,10 +117,6 @@ if ( ! function_exists( 'wc_mnm_template_edit_variable_container' ) ) {
 		 * @param obj $product WC_Mix_And_Match of parent product
 		 */
 		$classes = apply_filters( 'wc_mnm_edit_form_classes', $classes, $product );
-
-		// Enqueue scripts and styles - then, initialize js variables.
-		wp_enqueue_script( 'wc-add-to-cart-mnm' );
-		wp_enqueue_style( 'wc-mnm-frontend' );
 
 		// Get Available variations?
 		$get_variations = count( $product->get_children() ) <= apply_filters( 'woocommerce_ajax_variation_threshold', 30, $product );

@@ -38,6 +38,11 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		private static $notice = '';
 
 		/**
+		 * var bool $is_enqueued
+		 */
+		private static $is_enqueued = false;
+
+		/**
 		 * WC_MNM_Subscription_Editing Constructor
 		 *
 		 * @access 	public
@@ -82,7 +87,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			add_action( 'after_setup_theme', [ __CLASS__, 'template_includes' ] );
 
 			// Display Scripts.
-			add_action( 'woocommerce_account_view-subscription_endpoint', [ __CLASS__, 'load_scripts' ] );
+			add_action( 'woocommerce_account_view-subscription_endpoint', [ __CLASS__, 'attach_listener_for_scripts' ], 1 );
 			
 			// Ajax handler used to fetch form content for editing container order items.
 			add_action( 'wc_ajax_mnm_get_container_order_item_edit_form', [ __CLASS__, 'container_order_item_form' ] );
@@ -178,14 +183,38 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 		}
 
+		/**
+		 * Load the scripts on the my subscription page.
+		 */
+		public static function attach_listener_for_scripts() {
+			add_action( 'woocommerce_order_item_meta_end', [ __CLASS__, 'maybe_load_scripts' ], 10, 3 );
+		}
 
 		/**
-		 * Load the script anywhere the MNM edit form is displayed
+		 * Load the scripts on the my subscription page, only when a mix and match product is present.
+		 * 
+		 * @param int $item_id The subscription line item ID.
+		 * @param WC_Order_Item|array $item The subscription line item.
+		 * @param WC_Subscription $subscription The subscription.
 		 */
-		public static function load_scripts() {
-			wp_enqueue_script( 'jquery-blockui' );
-			wp_enqueue_script( 'wc-add-to-cart-mnm' );
-			wp_enqueue_script( 'wc-mnm-subscription-editing' );
+		public static function maybe_load_scripts( $item_id, $order_item, $subscription ) {
+
+			if ( ! self::$is_enqueued && wc_mnm_is_product_container_type( $order_item->get_product() ) ) {
+
+				wp_enqueue_script( 'jquery-blockui' );
+				wp_enqueue_script( 'wc-add-to-cart-mnm' );
+	
+				if ( class_exists( 'WC_MNM_Variable' ) ) {
+					WC_MNM_Variable::get_instance()->load_scripts();
+				}
+
+				wp_enqueue_script( 'wc-mnm-subscription-editing' );
+
+				self::$is_enqueued = true;
+
+				do_action( 'wc_mnm_subscription_editing_enqueue_scripts' );
+			}
+
 		}
 
 
