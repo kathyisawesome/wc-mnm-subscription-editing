@@ -107,9 +107,7 @@ if ( ! function_exists( 'wc_mnm_template_edit_variable_container' ) ) {
 		}
 
 		$classes = array(
-			'variations_form',
 			'variable_mnm_form',
-			'mnm_form',
 			'cart',
 			'cart_group',
 			'edit_container',
