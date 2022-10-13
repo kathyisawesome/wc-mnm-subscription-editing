@@ -32,78 +32,83 @@ $variations_attr = function_exists( 'wc_esc_json' ) ? wc_esc_json( $variations_j
  */
 do_action( 'wc_mnm_before_edit_container_form', $product, $order_item, $order );
 ?>
-<form class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>" action="<?php echo esc_url( apply_filters( 'wc_mnm_edit_container_form_action', '' ) ); ?>" method="post" enctype="multipart/form-data" data-product_id="<?php echo absint( $product->get_id() ); ?>" data-product_variations="<?php echo $variations_attr; // WPCS: XSS ok. ?>">>
+<form class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>" action="<?php echo esc_url( apply_filters( 'wc_mnm_edit_container_form_action', '' ) ); ?>" method="post" enctype="multipart/form-data" data-product_id="<?php echo absint( $product->get_id() ); ?>" data-product_variations="<?php echo $variations_attr; // WPCS: XSS ok. ?>">
 
-<?php do_action( 'wc_mnm_before_edit_variations_form' ); ?>
+	<?php do_action( 'wc_mnm_before_edit_variations_form', $product, $order_item, $order ); ?>
 
-<?php if ( empty( $available_variations ) && false !== $available_variations ) : ?>
-	<p class="stock out-of-stock"><?php echo esc_html( apply_filters( 'woocommerce_out_of_stock_message', __( 'This product is currently out of stock and unavailable.', 'woocommerce', 'wc-mnm-variable' ) ) ); ?></p>
-<?php else : ?>
-	<?php if ( count( $attributes ) === 1 && ! empty( $available_variations ) && count( $available_variations ) <= apply_filters( 'wc_mnm_variation_swatches_threshold', 3, $product ) ) :?>
+	<?php if ( empty( $available_variations ) && false !== $available_variations ) : ?>
+		<p class="stock out-of-stock"><?php echo esc_html( apply_filters( 'woocommerce_out_of_stock_message', __( 'This product is currently out of stock and unavailable.', 'wc-mnm-variable' ) ) ); ?></p>
+	<?php else : ?>
+		<?php if ( count( $attributes ) === 1 && ! empty( $available_variations ) && count( $available_variations ) <= apply_filters( 'wc_mnm_variation_swatches_threshold', 3, $product ) ) : ?>
 
-		<?php
-		// Working with a single attribute here.
-		$attribute = key( $attributes );
-		
-		wc_mnm_template_variation_attribute_options(
-			array(
-				'attribute' => $attribute,
-				'product'   => $product,
-			)				
-		);
-
-		?>
-
-	<?php else: ?>
-		<table class="variations" cellspacing="0" role="presentation">
-			<tbody>
-				<?php foreach ( $attributes as $attribute_name => $options ) : ?>
-					<tr>
-						<th class="label"><label for="<?php echo esc_attr( sanitize_title( $attribute_name ) ); ?>"><?php echo wc_attribute_label( $attribute_name ); // WPCS: XSS ok. ?></label></th>
-						<td class="value">
-							<?php
-								wc_dropdown_variation_attribute_options(
-									array(
-										'options'   => $options,
-										'attribute' => $attribute_name,
-										'product'   => $product,
-									)
-								);
-								echo end( $attribute_keys ) === $attribute_name ? wp_kses_post( apply_filters( 'woocommerce_reset_variations_link', '<a class="reset_variations" href="#">' . esc_html__( 'Clear', 'wc-mnm-variable' ) . '</a>' ) ) : '';
-							?>
-						</td>
-					</tr>
-				<?php endforeach; ?>
-			</tbody>
-		</table>
-		<?php do_action( 'wc_mnm_after_edit_variations_table' ); ?>
-
-	<?php endif; ?>
-
-		<div class="single_variation_wrap">
 			<?php
-				/**
-				 * Hook: woocommerce_before_single_variation.
-				 */
-				do_action( 'woocommerce_before_single_variation' );
+			// Working with a single attribute here.
+			$attribute = key( $attributes );
+			
+			wc_mnm_template_variation_attribute_options(
+				array(
+					'attribute' => $attribute,
+					'product'   => $product,
+				)				
+			);
 
-				/**
-				 * Hook: woocommerce_single_variation. Used to output the cart button and placeholder for variation data.
-				 *
-				 * @hooked woocommerce_single_variation - 10 Empty div for variation data.
-				 * @hooked woocommerce_single_variation_add_to_cart_button - 20 Qty and cart button.
-				 */
-				do_action( 'woocommerce_single_variation' );
-
-				/**
-				 * Hook: woocommerce_after_single_variation.
-				 */
-				do_action( 'woocommerce_after_single_variation' );
 			?>
-		</div>
+
+		<?php else: ?>
+			<table class="variations" cellspacing="0" role="presentation">
+				<tbody>
+					<?php foreach ( $attributes as $attribute_name => $options ) : ?>
+						<tr>
+							<th class="label"><label for="<?php echo esc_attr( sanitize_title( $attribute_name ) ); ?>"><?php echo wc_attribute_label( $attribute_name ); // WPCS: XSS ok. ?></label></th>
+							<td class="value">
+								<?php
+									wc_dropdown_variation_attribute_options(
+										array(
+											'options'   => $options,
+											'attribute' => $attribute_name,
+											'product'   => $product,
+										)
+									);
+									echo end( $attribute_keys ) === $attribute_name ? wp_kses_post( apply_filters( 'woocommerce_reset_variations_link', '<a class="reset_variations" href="#">' . esc_html__( 'Clear', 'wc-mnm-variable' ) . '</a>' ) ) : '';
+								?>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+			
+			<?php do_action( 'wc_mnm_after_edit_variations_table', $product, $order_item, $order ); ?>
+
+		<?php endif; ?>
+
+
 	<?php endif; ?>
 
-	<?php do_action( 'woocommerce_after_variations_form' ); ?>
+	<div class="single_variation_wrap">
+	<?php
+		/**
+		 * Hook: woocommerce_before_single_variation.
+		 */
+		do_action( 'wc_mnm_edit_before_single_variation', $product, $order_item, $order );
+
+		/**
+		 * Hook: woocommerce_single_variation. Used to output the cart button and placeholder for variation data.
+		 *
+		 * @hooked woocommerce_single_variation - 10 Empty div for variation data.
+		 * @hooked wc_mnm_template_single_variation - 15 Empty div for mnm variation data.
+		 * @hooked wc_mnm_template_edit_container_button - 20 Update cart button.
+		 */
+		do_action( 'wc_mnm_edit_single_variation', $product, $order_item, $order );
+
+		/**
+		 * Hook: woocommerce_after_single_variation.
+		 */
+		do_action( 'wc_mnm_edit_after_single_variation', $product, $order_item, $order );
+
+	?>
+	</div>
+
+	<?php do_action( 'wc_mnm_edit_after_variations_form', $product, $order_item, $order ); ?>
 
 </form>
 
