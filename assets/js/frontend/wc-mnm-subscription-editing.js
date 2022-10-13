@@ -22,9 +22,9 @@
 		 * Events.
 		 */
 		this.bind_event_handlers = function() {
-			$( '.woocommerce-MyAccount-content' ).on( 'click', '.mnm_table_container .wcs-switch-link.ajax-edit', this.loadForm );
-			$( '.shop_table' ).on( 'click', '.wc-mnm-cancel-edit', this.cancel );
-			$( '.shop_table' ).on( 'submit', '.mnm_form ', this.updateSubscription );
+			$( '.shop_table' ).on( 'click.wc-mnm-subscription-editing', '.mnm_table_container .wcs-switch-link.ajax-edit', this.loadForm );
+			$( '.shop_table' ).on( 'click.wc-mnm-subscription-editing', '.wc-mnm-cancel-edit', this.cancel );
+			$( '.shop_table' ).on( 'submit.wc-mnm-subscription-editing', '.mnm_form, .variable_mnm_form', this.updateSubscription );
 
 			$( document.body ).on( 'wc_mnm_subscription_updated_fragments_refreshed', this.scroll );
 			$( document.body ).on( 'wc_mnm_edit_container_in_shop_subscription_cancel', this.scroll );
