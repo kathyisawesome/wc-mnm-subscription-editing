@@ -299,7 +299,17 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 					throw new Exception( $error );
 				}
 
-				$product = $order_item->get_product();
+				// Detect variation change.
+				if ( ! empty( $_POST[ 'variation_id' ] ) && $_POST[ 'variation_id' ] > 0 && $_POST[ 'variation_id' ] !== $order_item->get_variation_id() ) {
+					$product = wc_get_product( intval( $_POST[ 'variation_id' ] ) );
+				} else {
+					$product = $order_item->get_product();
+				}
+
+				if ( ! $product ) {
+					$error = esc_html__( 'This product does not exist and so can not be edited.', 'wc-mnm-subscription-editing' );
+					throw new Exception( $error );
+				}
 
 				if ( ! wc_mnm_is_product_container_type( $product ) ) {
 					$error = esc_html__( 'Product is not mix and match container type and so cannot be edited', 'wc-mnm-subscription-editing' );
