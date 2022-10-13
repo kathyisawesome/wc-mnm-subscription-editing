@@ -40,17 +40,9 @@ if ( ! function_exists( 'wc_mnm_template_edit_simple_container' ) ) {
 	function wc_mnm_template_edit_simple_container( $order_item, $order ) {
 
 		global $product;
-		$backup_product = $product;
-
-		$container = false;
 
 		if ( $order_item instanceof WC_Order_Item_Product ) {
-			$container = $order_item->get_product();
-		}
-
-		// Swap the global product for this specific container.
-		if ( $container ) {
-			$product = $container;
+			$product = $order_item->get_product();
 		}
 
 		if ( ! $product || ! wc_mnm_is_product_container_type( $product ) ) {
@@ -82,15 +74,11 @@ if ( ! function_exists( 'wc_mnm_template_edit_simple_container' ) ) {
 			array(
 				'order_item' => $order_item,
 				'order'      => $order,
-				'container'  => $product,
 				'classes'    => $classes,
 			),
 			'',
 			WC_MNM_Subscription_Editing::plugin_path() . '/templates/'
 		);
-
-		// Restore product object.
-		$product = $backup_product;
 
 	}
 
@@ -107,15 +95,14 @@ if ( ! function_exists( 'wc_mnm_template_edit_variable_container' ) ) {
 	 */
 	function wc_mnm_template_edit_variable_container( $order_item, $order ) {
 
+		global $product;
+
 		if ( $order_item instanceof WC_Order_Item_Product ) {
 			// Need to get the parent product object in this case.
 			$product = apply_filters( 'woocommerce_order_item_product', wc_get_product( $order_item->get_product_id() ), $order_item );
 		}
 
-		// Setup globals $product.
-		$product = is_object( $product ) && $product->is_type( 'variable-mix-and-match' ) ? wc_setup_product_data( $product->get_id() ) : false;
-
-		if ( ! $product ) {
+		if ( ! $product || ! $product->is_type( 'variable-mix-and-match' ) ) {
 			return;
 		}
 
@@ -149,7 +136,6 @@ if ( ! function_exists( 'wc_mnm_template_edit_variable_container' ) ) {
 			array(
 				'order_item' => $order_item,
 				'order'      => $order,
-				'container'  => $product,
 				'classes'    => $classes,
 				'available_variations' => $get_variations ? $product->get_available_variations() : false,
 				'attributes'           => $product->get_variation_attributes(),
