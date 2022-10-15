@@ -2,7 +2,7 @@
 /**
  * Mix and Match Product Edit Container
  *
- * This template can be overridden by copying it to yourtheme/woocommerce/single-product/edit-order/edit-container.php.
+ * This template can be overridden by copying it to yourtheme/woocommerce/single-product/edit-order/edit-simple-mix-and-match.php.
  *
  * HOWEVER, on occasion WooCommerce Mix and Match will need to update template files and you
  * (the theme developer) will need to copy the new files to your theme to
@@ -29,7 +29,7 @@ global $product;
 do_action( 'wc_mnm_before_edit_container_form', $product, $order_item, $order );
 ?>
 
-<form class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>" action="<?php echo esc_url( apply_filters( 'woocommerce_add_to_cart_form_action', $product->get_permalink() ) ); ?>" method="post" enctype="multipart/form-data">
+<form class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>" action="<?php echo esc_url( apply_filters( 'wc_mnm_edit_container_form_action', '' ) ); ?>" method="post" enctype="multipart/form-data">
 
 	<?php
 
@@ -43,7 +43,7 @@ do_action( 'wc_mnm_before_edit_container_form', $product, $order_item, $order );
 	 * @hooked wc_mnm_content_loop - 10
 	 * @hooked wc_mnm_template_reset_link         - 20
 	 * @hooked wc_mnm_template_container_status   - 30
-	 * @hooked WC_MNM_Subscription_Editing::wc_mnm_template_edit_container_button - 40
+	 * @hooked wc_mnm_template_edit_container_button - 40
 	 */
 	do_action( 'wc_mnm_edit_container_content', $product, $order_item, $order );
 

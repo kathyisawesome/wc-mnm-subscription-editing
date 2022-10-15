@@ -38,6 +38,11 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		private static $notice = '';
 
 		/**
+		 * var bool $is_enqueued
+		 */
+		private static $is_enqueued = false;
+
+		/**
 		 * WC_MNM_Subscription_Editing Constructor
 		 *
 		 * @access 	public
@@ -58,6 +63,13 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 				return false;
 			}
 
+			// Sub check.
+			if ( ! class_exists( 'WC_Subscriptions_Plugin' )  ) {
+				self::$notice = __( 'WooCommerce Mix and Match Subscription Editing requires WooCommerce Subscriptions. Please install and activate WooCommerce Subscriptions', 'wc-mnm-subscription-editing' );
+				add_action( 'admin_notices', [ __CLASS__, 'admin_notice' ] );
+				return false;
+			}	
+
 			// APFS check.
 			if ( ! defined( 'WCS_ATT_VERSION' )  ) {
 				self::$notice = __( 'WooCommerce Mix and Match Subscription Editing requires WooCommerce All Products for Subscriptions. Please install and activate WooCommerce All Products for Subscriptions', 'wc-mnm-subscription-editing' );
@@ -71,8 +83,11 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			// Register Scripts.
 			add_action( 'wp_enqueue_scripts', [ __CLASS__, 'register_scripts' ], 20 );
 
+			// Load template actions/functions later.
+			add_action( 'after_setup_theme', [ __CLASS__, 'template_includes' ] );
+
 			// Display Scripts.
-			add_action( 'woocommerce_account_view-subscription_endpoint', [ __CLASS__, 'load_scripts' ] );
+			add_action( 'woocommerce_account_view-subscription_endpoint', [ __CLASS__, 'attach_listener_for_scripts' ], 1 );
 			
 			// Ajax handler used to fetch form content for editing container order items.
 			add_action( 'wc_ajax_mnm_get_container_order_item_edit_form', [ __CLASS__, 'container_order_item_form' ] );
@@ -85,10 +100,8 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			} else {
 				add_filter( 'woocommerce_subscriptions_switch_link', [ __CLASS__, 'switch_link' ], 99, 4 );
 			}
-
-			// Edit container form - stripped down add to cart form.
-			add_action( 'wc_mnm_edit_container_in_shop_subscription', [ __CLASS__ , 'wc_mnm_template_edit_container' ], 10, 2 );
 			
+			// Modify the edit form.
 			add_action( 'wc_mnm_edit_container_in_shop_subscription', [ __CLASS__, 'attach_hooks' ], 0 );
 			add_action( 'wc_mnm_before_edit_container_form', [ __CLASS__ , 'force_container_styles' ] );
 
@@ -170,14 +183,38 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 		}
 
+		/**
+		 * Load the scripts on the my subscription page.
+		 */
+		public static function attach_listener_for_scripts() {
+			add_action( 'woocommerce_order_item_meta_end', [ __CLASS__, 'maybe_load_scripts' ], 10, 3 );
+		}
 
 		/**
-		 * Load the script anywhere the MNM edit form is displayed
+		 * Load the scripts on the my subscription page, only when a mix and match product is present.
+		 * 
+		 * @param int $item_id The subscription line item ID.
+		 * @param WC_Order_Item|array $item The subscription line item.
+		 * @param WC_Subscription $subscription The subscription.
 		 */
-		public static function load_scripts() {
-			wp_enqueue_script( 'jquery-blockui' );
-			wp_enqueue_script( 'wc-add-to-cart-mnm' );
-			wp_enqueue_script( 'wc-mnm-subscription-editing' );
+		public static function maybe_load_scripts( $item_id, $order_item, $subscription ) {
+
+			if ( ! self::$is_enqueued && wc_mnm_is_product_container_type( $order_item->get_product() ) ) {
+
+				wp_enqueue_script( 'jquery-blockui' );
+				wp_enqueue_script( 'wc-add-to-cart-mnm' );
+	
+				if ( class_exists( 'WC_MNM_Variable' ) ) {
+					WC_MNM_Variable::get_instance()->load_scripts();
+				}
+
+				wp_enqueue_script( 'wc-mnm-subscription-editing' );
+
+				self::$is_enqueued = true;
+
+				do_action( 'wc_mnm_subscription_editing_enqueue_scripts' );
+			}
+
 		}
 
 
@@ -262,7 +299,17 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 					throw new Exception( $error );
 				}
 
-				$product = $order_item->get_product();
+				// Detect variation change.
+				if ( ! empty( $_POST[ 'variation_id' ] ) && $_POST[ 'variation_id' ] > 0 && $_POST[ 'variation_id' ] !== $order_item->get_variation_id() ) {
+					$product = wc_get_product( intval( $_POST[ 'variation_id' ] ) );
+				} else {
+					$product = $order_item->get_product();
+				}
+
+				if ( ! $product ) {
+					$error = esc_html__( 'This product does not exist and so can not be edited.', 'wc-mnm-subscription-editing' );
+					throw new Exception( $error );
+				}
 
 				if ( ! wc_mnm_is_product_container_type( $product ) ) {
 					$error = esc_html__( 'Product is not mix and match container type and so cannot be edited', 'wc-mnm-subscription-editing' );
@@ -439,6 +486,14 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		/*-----------------------------------------------------------------------------------*/
 
 		/**
+		 * Template files.
+		 */
+		public static function template_includes() {
+			include_once 'includes/wc-mnm-subscription-editing-template-functions.php';
+			include_once 'includes/wc-mnm-subscription-editing-template-hooks.php';
+		}
+
+		/**
 		 * Modify upgrade/downgrade button classes as of Subs 4.5.0.
 		 * 
 		 * @param array $classes The switch link classes.
@@ -492,93 +547,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 
 		/**
-		 * Edit container template for Mix and Match products.
-		 * 
-		 * @param WC_Order_Item $order_item
-		 * @param WC_Order $order
-		 */
-		public static function wc_mnm_template_edit_container( $order_item, $order ) {
-
-			global $product;
-			$backup_product = $product;
-
-			$container = false;
-
-			if ( $order_item instanceof WC_Order_Item_Product ) {
-				$container = $order_item->get_product();
-			}
-
-			// Swap the global product for this specific container.
-			if ( $container ) {
-				$product = $container;
-			}
-
-			if ( ! $product || ! wc_mnm_is_product_container_type( $product ) ) {
-				return;
-			}
-
-			$classes = array( 
-				'mnm_form',
-				'cart',
-				'cart_group',
-				'edit_container',
-				'layout_' . $product->get_layout(),
-			);
-		
-			/**
-			 * Form classes.
-			 *
-			 * @param array - The classes that will print in the <form> tag.
-			 * @param obj $product WC_Mix_And_Match of parent product
-			 */
-			$classes = apply_filters( 'wc_mnm_form_classes', $classes, $product );
-
-			// Enqueue scripts and styles - then, initialize js variables.
-			wp_enqueue_script( 'wc-add-to-cart-mnm' );
-			wp_enqueue_style( 'wc-mnm-frontend' );
-
-			// Load the edit container template.
-			wc_get_template(
-				'edit-order/edit-container.php',
-				array(
-					'order_item' => $order_item,
-					'order'      => $order,
-					'container'  => $order_item->get_product(),
-					'classes'    => $classes,
-				),
-				'',
-				self::plugin_path() . '/templates/'
-			);
-
-			// Restore product object.
-			$product = $backup_product;
-
-		}
-
-
-		/**
-		 * Edit container template for Mix and Match products.
-		 * 
-		 * @param WC_Mix_and_Match_Product $product
-		 * @param WC_Order_Item $order_item
-		 * @param WC_Order $order
-		 */
-		public static function wc_mnm_template_edit_container_button( $product, $order_item, $order ) {
-			// Load the edit container template.
-			wc_get_template(
-				'edit-order/update-container-button.php',
-				array(
-					'order_item' => $order_item,
-					'order'      => $order,
-					'container'  => $order_item->get_product(),
-					'button_text' => apply_filters( 'wc_mnm_edit_container_button_text', __( 'Update container', 'wc-mnm-subscription-editing' ), $order_item, $order ),
-				),
-				'',
-				self::plugin_path() . '/templates/'
-			);
-		}
-
-		/**
 		 * Customize edit container form for subscription context
 		 */
 		public static function attach_hooks() {
@@ -588,18 +556,8 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			add_filter( 'woocommerce_product_get_layout_override', '__return_true' );
 			add_filter( 'woocommerce_product_get_layout', function() { return 'tabular'; } );
 
-			// Add default MNM reset link.
-			add_action( 'wc_mnm_before_edit_container_button_wrap', 'wc_mnm_template_reset_link' );
-
-			// Add headings and button texts.
+			// Change button texts and validation context.
 			add_filter( 'wc_mnm_edit_container_button_text', [ __CLASS__, 'update_container_text' ] );
-			add_action( 'wc_mnm_before_edit_container_form', [ __CLASS__, 'edit_subscription_headling' ] );
-			add_action( 'wc_mnm_edit_container_content', 'wc_mnm_content_loop', 10 );
-			add_action( 'wc_mnm_edit_container_content', 'wc_mnm_template_reset_link', 20 );
-		
-			add_action( 'wc_mnm_edit_container_content', 'wc_mnm_template_container_status', 30 );
-			add_action( 'wc_mnm_edit_container_content', [ __CLASS__, 'wc_mnm_template_edit_container_button' ], 40, 3 );
-			add_action( 'wc_mnm_edit_container_content', [ __CLASS__, 'cancel_edit_link' ], 50 );
 			add_filter( 'wc_mnm_container_data_attributes', [ __CLASS__, 'data_attributes' ] );
 		}
 
@@ -613,31 +571,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			return esc_html__( 'Update subscription', 'wc-mnm-subscription-editing' );
 		}
 
-		/**
-		 * Headline prompt text.
-		 * 
-		 * @param  WC_Order_Item_Product $order_item
-		 */
-		public static function edit_subscription_headling( $order_item ) {
-			echo '<h3>' . sprintf( esc_html__( 'Edit selections for "%s"', 'wc-mnm-subscription-editing' ), $order_item->get_name() ) . '</h3>';
-		}
-
-
-		/**
-		 * Display "Cancel edit" link.
-		 *
-		 * @param  WC_Order_Item_Product $order_item
-		 */
-		public static function cancel_edit_link( $order_item ) {
-			global $product;
-			// translators: %1$s Screen reader text opening <span> %2$s Product title %3$s Closing </span>
-			$cancel_text = sprintf( esc_html_x( 'Cancel edit %1$soptions for %2$s%3$s', 'edit subscription cancel link text', 'wc-mnm-subscription-editing' ),
-				'<span class="screen-reader-text">',
-				$order_item->get_name(),
-				'</span>'
-			);
-			echo '<a class="wc-mnm-cancel-edit">' . $cancel_text . '</a>';
-		}
 
 		/*-----------------------------------------------------------------------------------*/
 		/* Scripts                                                                           */

@@ -22,12 +22,14 @@
 		 * Events.
 		 */
 		this.bind_event_handlers = function() {
-			$( '.woocommerce-MyAccount-content' ).on( 'click', '.mnm_table_container .wcs-switch-link.ajax-edit', this.loadForm );
-			$( '.shop_table' ).on( 'click', '.wc-mnm-cancel-edit', this.cancel );
-			$( '.shop_table' ).on( 'submit', '.mnm_form ', this.updateSubscription );
+			$( '.shop_table' ).on( 'click.wc-mnm-subscription-editing', '.mnm_table_container .wcs-switch-link.ajax-edit', this.loadForm );
+			$( '.shop_table' ).on( 'click.wc-mnm-subscription-editing', '.wc-mnm-cancel-edit', this.cancel );
+			$( '.shop_table' ).on( 'submit.wc-mnm-subscription-editing', '.mnm_form, .variable_mnm_form', this.updateSubscription );
 
 			$( document.body ).on( 'wc_mnm_subscription_updated_fragments_refreshed', this.scroll );
 			$( document.body ).on( 'wc_mnm_edit_container_in_shop_subscription_cancel', this.scroll );
+
+			$( '.shop_table' ).on( 'wc_mnm_variation_found.wc-mnm-subscription-editing', '.variable_mnm_form', this.onFoundVariation );
 			
 		};
 
@@ -44,7 +46,7 @@
 			let subscription_id = url.searchParams.get( 'switch-subscription' );
 			let item_id         = url.searchParams.get( 'item' );
 
-			let $containerRow  = $(this).closest( '.mnm_table_container' );
+			let $containerRow   = $(this).closest( '.mnm_table_container' );
 			let $all_rows       = $containerRow.nextAll( '.mnm_table_item' ).addBack();
 			let columns         = $containerRow.find( 'td' ).length;
 
@@ -77,7 +79,7 @@
 						$all_rows.fadeOut();
 
 						// Insert display row:
-						let $editRow = $( `<tr data-subscription_id="${subscription_id}" data-item_id="${item_id}" class="wc-mnm-subscription-edit-row"><td class="" colspan="${columns}" ><div class="wc-mnm-edit-container"></div></td></tr>` ).insertBefore( $containerRow );
+						let $editRow = $( `<tr class="wc-mnm-subscription-edit-row" data-subscription_id="${subscription_id}" data-item_id="${item_id}"><td colspan="${columns}" ><div class="wc-mnm-edit-container"></div></td></tr>` ).insertBefore( $containerRow );
 							
 						$.each( response.data, function( key, value ) {
 							$( key ).replaceWith( value );
@@ -87,9 +89,15 @@
 						if ( response.data[ 'div.wc-mnm-edit-container' ] ) {
 							// Re-attach the replaced result div.
 							let $result = $editRow.find( '.wc-mnm-edit-container' );
-							$result.find( '.mnm_form' ).each( function() {
-								$(this).wc_mnm_form();
+
+							$result.find( '.cart' ).each( function() {
+								if ( $(this).hasClass( 'variable_mnm_form' ) ) {
+									$(this).wc_mnm_variation_form();
+								} else if ( $(this).hasClass( 'mnm_form' ) ) {
+									$(this).wc_mnm_form();
+								}
 							} );
+
 						}
 
 						$( document.body ).trigger( 'wc_mnm_edit_container_in_shop_subscription_fragments_refreshed', [ response.data ] );
@@ -155,6 +163,7 @@
 				data: {
 					order_id       : $editRow.data( 'subscription_id' ),
 					subscription_id: $editRow.data( 'subscription_id' ),
+					variation_id   : 'undefined' !== typeof $editRow.data( 'variation_id' ) ? $editRow.data( 'variation_id' ) : 0,
 					item_id        : $editRow.data( 'item_id' ),
 					security       : wc_mnm_subscription_editing_params.edit_container_nonce,
 					config         : Form.api.get_container_config()
@@ -186,6 +195,13 @@
 			} );
 
 		};
+
+		// When variation is found, update variation ID.
+		this.onFoundVariation = function( event, variation ) {
+			let $editRow = $(this).closest( '.wc-mnm-subscription-edit-row' );
+			$editRow.data( 'variation_id', variation.variation_id );
+		};
+
 
 		/**
 		 * Scroll to totals
