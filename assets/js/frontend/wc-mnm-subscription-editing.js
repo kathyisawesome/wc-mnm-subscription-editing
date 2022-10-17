@@ -199,6 +199,13 @@
 
 		// When variation is found, update variation ID.
 		this.onFoundVariation = function( event, variation ) {
+			
+			let container     =  $(this).wc_get_mnm_script();
+
+			if ( container.api.get_container_size() > container.api.get_max_container_size() ) {
+				container.$mnm_form.trigger( 'wc-mnm-container-reset' );
+			}
+
 			let $editRow = $(this).closest( '.wc-mnm-subscription-edit-row' );
 			$editRow.data( 'variation_id', variation.variation_id );
 		};
