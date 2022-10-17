@@ -64,13 +64,13 @@
 			}
 
 			$.ajax( {
-				url: wc_mnm_subscription_editing_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'mnm_get_container_order_item_edit_form' ),
+				url: wc_mnm_subscription_editing_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'mnm_get_edit_container_order_item_form' ),
 				type: 'POST',
 				data: {
-					wc_mnm_get_container_edit_form: true,
-					item_id: item_id,
-					order_id: subscription_id,
-					security: wc_mnm_subscription_editing_params.edit_container_nonce
+					item_id         : item_id,
+					order_id        : subscription_id,
+					security        : wc_mnm_subscription_editing_params.edit_container_nonce,
+					context         : 'myaccount'
 				},
 				success: function( response ) {
 
@@ -158,7 +158,7 @@
 			}
 
 			$.ajax( {
-				url: wc_mnm_subscription_editing_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'mnm_update_container_subscription' ),
+				url: wc_mnm_subscription_editing_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'mnm_update_container_order_item' ),
 				type: 'POST',
 				data: {
 					order_id       : $editRow.data( 'subscription_id' ),
@@ -166,7 +166,8 @@
 					variation_id   : 'undefined' !== typeof $editRow.data( 'variation_id' ) ? $editRow.data( 'variation_id' ) : 0,
 					item_id        : $editRow.data( 'item_id' ),
 					security       : wc_mnm_subscription_editing_params.edit_container_nonce,
-					config         : Form.api.get_container_config()
+					config         : Form.api.get_container_config(),
+					context        : 'myaccount'
 				},
 				success: function( response ) {
 

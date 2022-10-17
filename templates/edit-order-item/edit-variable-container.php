@@ -1,6 +1,6 @@
 <?php
 /**
- * Mix and Match Product Edit Container
+ * Mix and Match Product Edit Variable Container
  *
  * This template can be overridden by copying it to yourtheme/woocommerce/single-product/edit-order/edit-variable-mix-and-match.php.
  *
@@ -30,11 +30,11 @@ $variations_attr = function_exists( 'wc_esc_json' ) ? wc_esc_json( $variations_j
 /**
  * wc_mnm_before_edit_container_form hook.
  */
-do_action( 'wc_mnm_before_edit_container_form', $product, $order_item, $order );
+do_action( 'wc_mnm_before_edit_container_order_item_form', $product, $order_item, $order, $context );
 ?>
-<form class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>" action="<?php echo esc_url( apply_filters( 'wc_mnm_edit_container_form_action', '' ) ); ?>" method="post" enctype="multipart/form-data" data-product_id="<?php echo absint( $product->get_id() ); ?>" data-product_variations="<?php echo $variations_attr; // WPCS: XSS ok. ?>">
+<form class="<?php echo 'layout_' . esc_attr( $product->get_layout() ); ?> <?php echo esc_attr( implode( ' ', $classes ) ); ?>" action="<?php echo esc_url( apply_filters( 'wc_mnm_edit_container_order_item_form_action', '' ) ); ?>" method="post" enctype="multipart/form-data" data-product_id="<?php echo absint( $product->get_id() ); ?>" data-product_variations="<?php echo $variations_attr; // WPCS: XSS ok. ?>">
 
-	<?php do_action( 'wc_mnm_before_edit_variations_form', $product, $order_item, $order ); ?>
+	<?php do_action( 'wc_mnm_edit_container_order_item_before_variations_form', $product, $order_item, $order, $context ); ?>
 
 	<?php if ( empty( $available_variations ) && false !== $available_variations ) : ?>
 		<p class="stock out-of-stock"><?php echo esc_html( apply_filters( 'woocommerce_out_of_stock_message', __( 'This product is currently out of stock and unavailable.', 'wc-mnm-variable' ) ) ); ?></p>
@@ -77,7 +77,7 @@ do_action( 'wc_mnm_before_edit_container_form', $product, $order_item, $order );
 				</tbody>
 			</table>
 			
-			<?php do_action( 'wc_mnm_after_edit_variations_table', $product, $order_item, $order ); ?>
+			<?php do_action( 'wc_mnm_edit_container_order_item_after_variations_table', $product, $order_item, $order, $context ); ?>
 
 		<?php endif; ?>
 
@@ -87,34 +87,34 @@ do_action( 'wc_mnm_before_edit_container_form', $product, $order_item, $order );
 	<div class="single_variation_wrap">
 	<?php
 		/**
-		 * Hook: woocommerce_before_single_variation.
+		 * Hook: wc_mnm_edit_container_order_item_before_single_variation.
 		 */
-		do_action( 'wc_mnm_edit_before_single_variation', $product, $order_item, $order );
+		do_action( 'wc_mnm_edit_container_order_item_before_single_variation', $product, $order_item, $order, $context );
 
 		/**
-		 * Hook: woocommerce_single_variation. Used to output the cart button and placeholder for variation data.
+		 * Hook: wc_mnm_edit_container_order_item_single_variation. Used to output the cart button and placeholder for variation data.
 		 *
 		 * @hooked woocommerce_single_variation - 10 Empty div for variation data.
 		 * @hooked wc_mnm_template_single_variation - 15 Empty div for mnm variation data.
 		 * @hooked wc_mnm_template_edit_container_button - 20 Update cart button.
 		 */
-		do_action( 'wc_mnm_edit_single_variation', $product, $order_item, $order );
+		do_action( 'wc_mnm_edit_container_order_item_single_variation', $product, $order_item, $order, $context );
 
 		/**
-		 * Hook: woocommerce_after_single_variation.
+		 * Hook: wc_mnm_edit_container_order_item_after_single_variation.
 		 */
-		do_action( 'wc_mnm_edit_after_single_variation', $product, $order_item, $order );
+		do_action( 'wc_mnm_edit_container_order_item_after_single_variation', $product, $order_item, $order, $context );
 
 	?>
 	</div>
 
-	<?php do_action( 'wc_mnm_edit_after_variations_form', $product, $order_item, $order ); ?>
+	<?php do_action( 'wc_mnm_edit_container_order_item_after_variations_form', $product, $order_item, $order, $context ); ?>
 
 </form>
 
 <?php
 /**
- * wc_mnm_after_edit_container_form hook.
+ * wc_mnm_after_edit_container_order_item_form hook.
  */
-do_action( 'wc_mnm_after_edit_container_form', $product, $order_item, $order );
+do_action( 'wc_mnm_after_edit_container_order_item_form', $product, $order_item, $order, $context );
 ?>

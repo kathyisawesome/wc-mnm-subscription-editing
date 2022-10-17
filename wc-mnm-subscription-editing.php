@@ -30,7 +30,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		 * constants
 		 */
 		const VERSION = '1.0.0-beta.4';
-		const REQ_MNM_VERSION = '2.2.0-beta-1';
+		const REQ_MNM_VERSION = '2.2.0';
 
 		/**
 		 * var string $notice
@@ -88,11 +88,11 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 			// Display Scripts.
 			add_action( 'woocommerce_account_view-subscription_endpoint', [ __CLASS__, 'attach_listener_for_scripts' ], 1 );
-			
-			// Ajax handler used to fetch form content for editing container order items.
-			add_action( 'wc_ajax_mnm_get_container_order_item_edit_form', [ __CLASS__, 'container_order_item_form' ] );
-			// Ajax handler for editing containers in subscriptions.
-			add_action( 'wc_ajax_mnm_update_container_subscription', [ __CLASS__ , 'update_container_subscription' ] );
+
+			// Adjust core ajax.
+			add_action( 'wc_mnm_editing_container_in_order', [ __CLASS__, 'add_order_note' ], 10, 4 );
+			add_filter( 'wc_mnm_get_product_from_edit_order_item', [ __CLASS__, 'switch_variation' ], 10, 4 );
+			add_filter( 'wc_mnm_updated_container_in_shop_subscription_fragments', [ __CLASS__, 'updated_subscription_fragments' ], 10, 4 );
 
 			// Frontend display.
 			if ( version_compare( WC_Subscriptions::$version, '4.5.0', '>=' ) ) {
@@ -102,8 +102,8 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			}
 			
 			// Modify the edit form.
-			add_action( 'wc_mnm_edit_container_in_shop_subscription', [ __CLASS__, 'attach_hooks' ], 0 );
-			add_action( 'wc_mnm_before_edit_container_form', [ __CLASS__ , 'force_container_styles' ] );
+			add_action( 'wc_mnm_edit_container_order_item_in_shop_subscription', array( __CLASS__, 'attach_hooks' ), 0, 4 );
+
 
 		}
 
@@ -201,8 +201,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 			if ( ! self::$is_enqueued && wc_mnm_is_product_container_type( $order_item->get_product() ) ) {
 
-				wp_enqueue_script( 'jquery-blockui' );
-				wp_enqueue_script( 'wc-add-to-cart-mnm' );
+				WC_MNM_Ajax::load_edit_scripts();
 	
 				if ( class_exists( 'WC_MNM_Variable' ) ) {
 					WC_MNM_Variable::get_instance()->load_scripts();
@@ -222,120 +221,68 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		/* Ajax                                                                              */
 		/*-----------------------------------------------------------------------------------*/
 
-		
+	
 		/**
-		 * Form content used to populate "Configure/Edit" container order items.
+		 * Adds order note.
+		 * 
+		 * @param  WC_Order_Item_Product  $new_order_item
+		 * @param  WC_Order_Item_Product  $order_item - the old order item.
+		 * @param  $subscription      WC_Subscription
+		 * @param  string $context The originating source loading this template
 		 */
-		public static function container_order_item_form() {
+		public static function add_order_note( $container_item, $old_container_item, $subscription, $context ) {
 
-			$result = self::can_edit_container();
+			// @ todo - detect variation change and note that.
 
-			if ( is_wp_error( $result ) ) {
-				// translators: %s is the validation error message.
-				$error = sprintf( esc_html__( 'Cannot edit this mix and match subscription. Reason: %s.', 'wc-mnm-subscription-editing' ), $result->get_error_message() );
-				wp_send_json_error( $error );
+			if ( $subscription instanceof WC_Subscription && 'myaccount' === $context ) {
+				$subscription->add_order_note( sprintf( esc_html__( 'Customer modified selections for "%1$s" subscription via the My Account page.', 'wc-mnm-subscription-editing' ), $container_item->get_name() ) );
 			}
 
-			// Populate $order, $product, and $order_item variables.
-			extract( $result );
+		}
 
-			// Initialize form state based on the actual configuration of the container.
-			$configuration = WC_Mix_and_Match_Order::get_current_container_configuration( $order_item, $order );
+		/**
+		 * Preserve subscription switch args.
+		 * 
+		 * @param obj WC_Product $product
+		 * @param obj WC_Order_Item
+		 * @param obj WC_Order
+		 * @param  string $context The originating source loading this template
+		 * @return WC_Product
+		 */
+		public static function switch_variation( $product, $container_item, $subscription, $context ) {
 
-			if ( ! empty( $configuration ) ) {
-				$_REQUEST = array_merge( $_REQUEST, WC_Mix_and_Match()->cart->rebuild_posted_container_form_data( $configuration, $product ) );
+			// Detect a variation switch.
+			if ( ! empty ( $_POST[ 'variation_id' ] ) && intval( $_POST[ 'variation_id' ] ) !== $container_item->get_variation_id() ) {
+				$product = wc_get_product( intval( $_POST[ 'variation_id' ] ) );
 			}
 
-			ob_start();
-			echo '<div class="wc-mnm-edit-container wc-mnm-edit-container-' . $order->get_type() . '">'; // Restore wrapping class as fragments replaces it.
-			do_action( 'wc_mnm_edit_container_in_' . $order->get_type(), $order_item, $order );
-			echo '</div>';
+			return $product;
 
-			$form = ob_get_clean();
-			
-			// filter ex: wc_mnm_edit_container_in_shop_order_fragments
-			$response = apply_filters( 'wc_mnm_edit_container_in_' . $order->get_type() . '_fragments', array( 'div.wc-mnm-edit-container' => $form ), $order_item, $order );
-
-			wp_send_json_success( $response );
 		}
 
 
 		/**
-		 * Validates edited/configured containers and returns updated order items.
-		 *
-		 * @return mixed - If editable will return an array. Otherwise, will return WP_Error.
+		 * Adds to fragments.
+		 * 
+		 * @param  array $fragments     
+		 * @param  $container_item WC_Order_Item
+		 * @param  $subscription      WC_Subscription
+		 * @param  string $context The originating source loading this template
+		 * @return array
 		 */
-		private static function can_edit_container() {
+		public static function updated_subscription_fragments( $fragments, $container_item, $subscription, $context ) {
 
-			try {
-
-				if ( ! check_ajax_referer( 'wc_mnm_edit_container', 'security', false ) ) {
-					$error = esc_html__( 'Security failure', 'wc-mnm-subscription-editing' );
-					throw new Exception( $error );
-				}
-
-				if ( empty( $_POST['order_id'] ) || empty( $_POST['item_id'] ) ) {
-					$error = esc_html__( 'Missing order ID or item ID', 'wc-mnm-subscription-editing' );
-					throw new Exception( $error );
-				}
-
-				$order   = wc_get_order( wc_clean( $_POST['order_id'] ) );
-				$item_id = absint( wc_clean( $_POST['item_id'] ) );
-
-				if ( ! ( $order instanceof WC_Order ) ) {
-					$error = esc_html__( 'Not a valid order', 'wc-mnm-subscription-editing' );
-					throw new Exception( $error );
-				}
-
-				if ( ! current_user_can( 'switch_shop_subscription', $order->get_id() ) ) {
-					$error = esc_html__( 'You do not have authority to edit this subscription', 'wc-mnm-subscription-editing' );
-					throw new Exception( $error );
-				}
-
-				$order_item = $order->get_item( $item_id );
-
-				if ( ! ( $order_item instanceof WC_Order_Item ) ) {
-					$error = esc_html__( 'Not a valid order item', 'wc-mnm-subscription-editing' );
-					throw new Exception( $error );
-				}
-
-				// Detect variation change.
-				if ( ! empty( $_POST[ 'variation_id' ] ) && $_POST[ 'variation_id' ] > 0 && $_POST[ 'variation_id' ] !== $order_item->get_variation_id() ) {
-					$product = wc_get_product( intval( $_POST[ 'variation_id' ] ) );
-				} else {
-					$product = $order_item->get_product();
-				}
-
-				if ( ! $product ) {
-					$error = esc_html__( 'This product does not exist and so can not be edited.', 'wc-mnm-subscription-editing' );
-					throw new Exception( $error );
-				}
-
-				if ( ! wc_mnm_is_product_container_type( $product ) ) {
-					$error = esc_html__( 'Product is not mix and match container type and so cannot be edited', 'wc-mnm-subscription-editing' );
-					throw new Exception( $error );
-				}
-
-				if ( ! $product->has_child_items() ) {
-					$error = esc_html__( 'Container product does not have any available child items', 'wc-mnm-subscription-editing' );
-					throw new Exception( $error );
-				}
-
-				return array (
-					'product'    => $product,
-					'order'      => $order,
-					'order_item' => $order_item,
-				);
-
-			} catch ( Exception $e ) {
-
-				// translators: %s is the validation error message.
-				$error = sprintf( esc_html__( 'Cannot edit this mix and match subscription. Reason: %s.', 'wc-mnm-subscription-editing' ), $e->getMessage() );
-	
-				return new WP_Error( 'mnm_edit_subscription_failure', $error );
-	
+			if ( $subscription instanceof WC_Subscription && 'myaccount' === $context ) {
+				// Get new order items fragment.
+				ob_start();
+				WCS_Template_Loader::get_subscription_totals_table_template( $subscription, true, $subscription->get_order_item_totals() );
+				$fragments[ 'table.order_details' ] = ob_get_clean();
 			}
+
+			return $fragments;
+
 		}
+
 
 		/**
 		 * Force tabular layout and hide child links.
@@ -548,17 +495,27 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 		/**
 		 * Customize edit container form for subscription context
+		 * 
+		 * @param  $product  WC_Product_Mix_and_Match
+		 * @param  $order_item WC_Order_Item
+		 * @param  $order      WC_Order
+		 * @param  string $context The originating source loading this template
 		 */
-		public static function attach_hooks() {
+		public static function attach_hooks( $product, $order_item, $order, $context ) {
 
-			// Force tabular display mode.
-			add_filter( 'woocommerce_is_visibile', '__return_false' );
-			add_filter( 'woocommerce_product_get_layout_override', '__return_true' );
-			add_filter( 'woocommerce_product_get_layout', function() { return 'tabular'; } );
+			if ( 'myaccount' === $context ) {
 
-			// Change button texts and validation context.
-			add_filter( 'wc_mnm_edit_container_button_text', [ __CLASS__, 'update_container_text' ] );
-			add_filter( 'wc_mnm_container_data_attributes', [ __CLASS__, 'data_attributes' ] );
+				// Force default location for variations.
+				add_filter( 'woocommerce_product_variation_get_add_to_cart_form_location', function() { return 'default'; } );
+
+				// Force tabular layout for variations.
+				add_filter( 'woocommerce_product_variation_get_layout', function() { return 'tabular'; } );
+
+				// Change button texts and validation context.
+				add_filter( 'wc_mnm_edit_container_button_text', [ __CLASS__, 'update_container_text' ] );
+			
+			}
+			
 		}
 
 		/**
@@ -571,22 +528,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			return esc_html__( 'Update subscription', 'wc-mnm-subscription-editing' );
 		}
 
-
-		/*-----------------------------------------------------------------------------------*/
-		/* Scripts                                                                           */
-		/*-----------------------------------------------------------------------------------*/
-
-		/**
-		 * Form parameters - Switch validation message context.
-		 *
-		 * @param  array $params
-		 */
-		public static function data_attributes( $atts ) {
-			if ( wp_doing_ajax() && isset( $_POST[ 'wc_mnm_get_container_edit_form' ] ) ){
-				$atts[ 'context' ] = 'edit';
-			}			
-			return $atts;
-		}
 
 		/*-----------------------------------------------------------------------------------*/
 		/* Helpers                                                                           */
