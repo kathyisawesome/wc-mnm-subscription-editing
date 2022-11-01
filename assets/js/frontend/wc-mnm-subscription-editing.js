@@ -46,9 +46,10 @@
 			let subscription_id = url.searchParams.get( 'switch-subscription' );
 			let item_id         = url.searchParams.get( 'item' );
 
-			let $containerRow   = $(this).closest( '.mnm_table_container' );
-			let $all_rows       = $containerRow.nextAll( '.mnm_table_item' ).addBack();
-			let columns         = $containerRow.find( 'td' ).length;
+			let $content      = $( '.woocommerce-MyAccount-content' );
+			let $containerRow = $(this).closest( '.mnm_table_container' );
+			let $all_rows     = $containerRow.nextAll( '.mnm_table_item' ).addBack();
+			let columns       = $containerRow.find( 'td' ).length;
 
 			// If currently processing... or clicking on same item, quit now.
 			if ( $containerRow.is( '.processing' ) ) {
@@ -75,6 +76,8 @@
 				success: function( response ) {
 
 					if ( response.success && response.data ) {
+
+						$content.addClass( 'wc-mnm-subscription-editing' );
 					
 						$all_rows.fadeOut();
 
@@ -122,9 +125,12 @@
 		 */
 		this.cancel = function(e) {
 			e.preventDefault();
+			let $content      = $( '.woocommerce-MyAccount-content' );
 			let $editRow = $(this).closest( '.wc-mnm-subscription-edit-row' );
 			let $containerRow  = $editRow.next( '.mnm_table_container' );
 			let $all_rows       = $containerRow.nextAll( '.mnm_table_item' ).addBack();
+
+			$content.removeClass( 'wc-mnm-subscription-editing' );
 
 			$editRow.fadeOut().remove();
 			$all_rows.fadeIn();
@@ -141,8 +147,9 @@
 
 			e.preventDefault();
 
+			let $content = $( '.woocommerce-MyAccount-content' );
 			let $editRow = $(this).closest( '.wc-mnm-subscription-edit-row' );
-			let Form     =  $(this).wc_get_mnm_script();
+			let Form     = $(this).wc_get_mnm_script();
 
 			// If currently processing... or clicking on same item, quit now.
 			if ( $editRow.is( '.processing' ) ) {
@@ -189,6 +196,7 @@
 				},
 				complete: function() {
 					$editRow.removeClass( 'processing' ).unblock();
+					$content.removeClass( 'wc-mnm-subscription-editing' );
 				},
 				fail: function() {
 					window.alert( wc_mnm_subscription_editing_params.i18n_edit_failure_message );
