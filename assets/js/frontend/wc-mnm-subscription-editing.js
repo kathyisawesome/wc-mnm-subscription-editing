@@ -210,8 +210,6 @@
 			
 			let container     =  $(this).wc_get_mnm_script();
 
-			if ( container.api.get_container_size() > container.api.get_max_container_size() ) {
-				container.$mnm_form.trigger( 'wc-mnm-container-reset' );
 			}
 
 			let $editRow = $(this).closest( '.wc-mnm-subscription-edit-row' );
