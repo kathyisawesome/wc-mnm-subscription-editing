@@ -84,22 +84,25 @@
 						// Insert display row:
 						let $editRow = $( `<tr class="wc-mnm-subscription-edit-row" data-subscription_id="${subscription_id}" data-item_id="${item_id}"><td colspan="${columns}" ><div class="wc-mnm-edit-container"></div></td></tr>` ).insertBefore( $containerRow );
 							
-						$.each( response.data, function( key, value ) {
-							$( key ).replaceWith( value );
-						});
+						if ( 'object' === typeof response.data ) {
+							$.each( response.data, function( key, value ) {
+								$( key ).replaceWith( value );
+							});
 
-						// Initilize MNM scripts.
-						if ( response.data[ 'div.wc-mnm-edit-container' ] ) {
-							// Re-attach the replaced result div.
-							let $result = $editRow.find( '.wc-mnm-edit-container' );
+							// Initilize MNM scripts.
+							if ( response.data[ 'div.wc-mnm-edit-container' ] ) {
+								// Re-attach the replaced result div.
+								let $result = $editRow.find( '.wc-mnm-edit-container' );
 
-							$result.find( '.cart' ).each( function() {
-								if ( $(this).hasClass( 'variable_mnm_form' ) ) {
-									$(this).wc_mnm_variation_form();
-								} else if ( $(this).hasClass( 'mnm_form' ) ) {
-									$(this).wc_mnm_form();
-								}
-							} );
+								$result.find( '.cart' ).each( function() {
+									if ( $(this).hasClass( 'variable_mnm_form' ) ) {
+										$(this).wc_mnm_variation_form();
+									} else if ( $(this).hasClass( 'mnm_form' ) ) {
+										$(this).wc_mnm_form();
+									}
+								} );
+
+							}
 
 						}
 
@@ -179,13 +182,16 @@
 				success: function( response ) {
 
 					if ( response.success && response.data ) {
+						if ( 'object' === typeof response.data ) {
+							$.each( response.data, function( key, value ) {
+								$( key ).replaceWith( value );
+							});
+						} else {
+							$( '.woocommerce-MyAccount-content .wc-mnm-cancel-edit' ).trigger( 'click' );
+						}
 
 						// Remove the edit form.
 						$editRow.remove();
-								
-						$.each( response.data, function( key, value ) {
-							$( key ).replaceWith( value );
-						});
 
 						$( document.body ).trigger( 'wc_mnm_subscription_updated_fragments_refreshed', [ response.data ] );
 

@@ -235,10 +235,14 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		 */
 		public static function add_order_note( $container_item, $old_container_item, $subscription, $context ) {
 
-			// @ todo - detect variation change and note that.
-
 			if ( $subscription instanceof WC_Subscription && 'myaccount' === $context ) {
-				$subscription->add_order_note( sprintf( esc_html__( 'Customer modified selections for "%1$s" subscription via the My Account page.', 'wc-mnm-subscription-editing' ), $container_item->get_name() ) );
+
+				if ( $container_item->get_variation_id() !== $old_container_item->get_variation_id() ) {
+					$subscription->add_order_note( sprintf( esc_html__( 'Customer switched variation subscription from "%1$s" to "%2$s" via the My Account page.', 'wc-mnm-subscription-editing' ), $old_container_item->get_name(), $container_item->get_name() ) );
+				} else {
+					$subscription->add_order_note( sprintf( esc_html__( 'Customer modified selections for "%1$s" subscription via the My Account page.', 'wc-mnm-subscription-editing' ), $container_item->get_name() ) );
+				}
+				
 			}
 
 		}
