@@ -213,11 +213,6 @@
 
 		// When variation is found, update variation ID.
 		this.onFoundVariation = function( event, variation ) {
-			
-			let container     =  $(this).wc_get_mnm_script();
-
-			}
-
 			let $editRow = $(this).closest( '.wc-mnm-subscription-edit-row' );
 			$editRow.data( 'variation_id', variation.variation_id );
 		};
