@@ -35,7 +35,7 @@ jobs:
     steps:
 
       - name: "Checks out the repository."
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v3"
 
       - name: "Sets up PHP with Composer."
         uses: shivammathur/setup-php@v2
@@ -51,7 +51,7 @@ jobs:
           echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: "Sets up Composer Caching."
-        uses: "actions/cache@v2"
+        uses: "actions/cache@v3"
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-php-composer-build-${{ hashFiles('**/composer.lock') }}
@@ -68,10 +68,9 @@ jobs:
           composer install --no-interaction --prefer-dist --no-scripts
 
       - name: "Setup NodeJS."
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: '14'
-
+          node-version: 16
       - name: "Get NPM cache directory."
         id: npm-cache-dir
         run: |
