@@ -47,15 +47,17 @@
 			let item_id         = url.searchParams.get( 'item' );
 
 			let $content      = $( '.woocommerce-MyAccount-content' );
+			let $tbody        = $content.find( '.shop_table.order_details tbody' );
 			let $containerRow = $(this).closest( '.mnm_table_container' );
 			let $all_rows     = $containerRow.nextAll( '.mnm_table_item' ).addBack();
 			let columns       = $containerRow.find( 'td' ).length;
 
 			// If currently processing... or clicking on same item, quit now.
-			if ( $containerRow.is( '.processing' ) ) {
+			if ( $tbody.is( '.processing' ) ) {
 				return false;
-			} else if ( ! $containerRow.is( '.processing' ) ) {
-				$all_rows.addClass( 'processing' ).block( {
+			} else if ( ! $tbody.is( '.processing' ) ) {
+				$tbody.addClass( 'processing' );
+				$tbody.block( {
 				message: null,
 				overlayCSS: {
 					background: '#fff',
@@ -114,7 +116,7 @@
 					
 				},
 				complete: function() {
-					$all_rows.removeClass( 'processing' ).unblock();
+					$tbody.removeClass( 'processing' ).unblock();
 				},
 				fail: function() {
 					location.href = target_url;
@@ -129,9 +131,9 @@
 		this.cancel = function(e) {
 			e.preventDefault();
 			let $content      = $( '.woocommerce-MyAccount-content' );
-			let $editRow = $(this).closest( '.wc-mnm-subscription-edit-row' );
-			let $containerRow  = $editRow.next( '.mnm_table_container' );
-			let $all_rows       = $containerRow.nextAll( '.mnm_table_item' ).addBack();
+			let $editRow      = $(this).closest( '.wc-mnm-subscription-edit-row' );
+			let $containerRow = $editRow.next( '.mnm_table_container' );
+			let $all_rows     = $containerRow.nextAll( '.mnm_table_item' ).addBack();
 
 			$content.removeClass( 'wc-mnm-subscription-editing' );
 
