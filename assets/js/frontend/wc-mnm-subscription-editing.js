@@ -29,7 +29,7 @@
 			$( document.body ).on( 'wc_mnm_subscription_updated_fragments_refreshed', this.scroll );
 			$( document.body ).on( 'wc_mnm_edit_container_in_shop_subscription_cancel', this.scroll );
 
-			$( document.body).on( 'wc_mnm_scroll_to_variation', function() { return false } );
+			$( document.body).on( 'wc_mnm_scroll_to_variation', function() { return false; } );
 
 			$( '.woocommerce-MyAccount-content' ).on( 'wc_mnm_variation_found.wc-mnm-subscription-editing', '.variable_mnm_form', this.onFoundVariation );
 			
