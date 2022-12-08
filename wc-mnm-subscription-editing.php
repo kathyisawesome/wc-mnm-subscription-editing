@@ -290,22 +290,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 		}
 
-
-		/**
-		 * Force tabular layout and hide child links.
-		 */
-		public static function force_container_styles() {
-			// Force tabular override.
-			add_filter( 'woocommerce_product_get_layout_override', '__return_true' );
-
-			// Force tabular layout.
-			add_filter( 'woocommerce_product_get_layout', function() { return 'tabular'; } );
-
-			// Hide links.
-			add_filter( 'woocommerce_product_is_visible', '__return_false' );
-			
-		}
-
 		/**
 		 * Updates the MNM subscription.
 		 */
@@ -512,11 +496,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 			if ( 'myaccount' === $context ) {
 
-				// Force default location for variations.
-				add_filter( 'woocommerce_product_variation_get_add_to_cart_form_location', function() { return 'default'; } );
 
-				// Force tabular layout for variations.
-				add_filter( 'woocommerce_product_variation_get_layout', function() { return 'tabular'; } );
 
 				// Change button texts and validation context.
 				add_filter( 'wc_mnm_edit_container_button_text', [ __CLASS__, 'update_container_text' ] );
