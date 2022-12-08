@@ -171,6 +171,8 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 					margin-right: 1em;
 					cursor: pointer;
 				}
+				.wc-mnm-edit-container-shop_subscription .wc-mnm-edit-subscription-actions { display: inline-block; }
+
 				.woocommerce-MyAccount-content.wc-mnm-subscription-editing .order_details tfoot {
 					opacity: 30%;
 				}
