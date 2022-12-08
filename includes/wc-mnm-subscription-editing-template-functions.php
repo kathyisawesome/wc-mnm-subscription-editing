@@ -138,7 +138,11 @@ if ( ! function_exists( 'wc_mnm_template_edit_cancel_link' ) ) {
 				$order_item->get_name(),
 				'</span>'
 			);
-			echo '<a class="wc-mnm-cancel-edit">' . $cancel_text . '</a>';
+			echo '<div class="wc-mnm-edit-subscription-actions woocommerce-cart-form">
+					<div class="actions">
+						<button class="button alt wc-mnm-cancel-edit"> ' . wp_kses_post( $cancel_text ) . '</button>
+					</div>
+				</div>';
 		}
 	}
 }
