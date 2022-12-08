@@ -104,6 +104,8 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			// Modify the edit form.
 			add_action( 'wc_mnm_edit_container_order_item_in_shop_subscription', array( __CLASS__, 'attach_hooks' ), 0, 4 );
 
+			// Variable Mix and Match performance boosts.
+			add_filter( 'wc_mnm_eager_load_variations', [ __CLASS__, 'eager_load_variations' ] );
 
 		}
 
@@ -515,6 +517,20 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			return esc_html__( 'Update subscription', 'wc-mnm-subscription-editing' );
 		}
 
+
+	
+		/*-----------------------------------------------------------------------------------*/
+		/* Variable Mix and Match                                                            */
+		/*-----------------------------------------------------------------------------------*/
+
+		/**
+		 * Disable eager loading of mix and match HTML for variations in editing context.
+		 * 
+		 * @param bool $eager_load
+		 */
+		public static function eager_load_variations( $eager_load ) {
+			return doing_action( 'wc_ajax_mnm_get_edit_container_order_item_form' ) ? false : $eager_load;
+		}
 
 		/*-----------------------------------------------------------------------------------*/
 		/* Helpers                                                                           */
