@@ -164,7 +164,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 					font-size: initial;
 				}
 				.wc-mnm-edit-container-shop_subscription .mnm_form .qty:not(.mnm-checkbox) {
-					max-wdith: 5em;
+					max-width: 5em;
 				}
 				.wc-mnm-edit-container-shop_subscription .wc-mnm-cancel-edit {
 					margin-left: 1em;
