@@ -72,10 +72,10 @@
 				url: wc_mnm_subscription_editing_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'mnm_get_edit_container_order_item_form' ),
 				type: 'POST',
 				data: {
-					item_id         : item_id,
-					order_id        : subscription_id,
-					security        : wc_mnm_subscription_editing_params.edit_container_nonce,
-					context         : 'myaccount'
+					item_id : item_id,
+					order_id: subscription_id,
+					security: wc_mnm_subscription_editing_params.edit_container_nonce,
+					source  : 'myaccount'
 				},
 				success: function( response ) {
 
@@ -181,7 +181,7 @@
 					item_id        : $editRow.data( 'item_id' ),
 					security       : wc_mnm_subscription_editing_params.edit_container_nonce,
 					config         : Form.api.get_container_config(),
-					context        : 'myaccount'
+					source         : 'myaccount'
 				},
 				success: function( response ) {
 

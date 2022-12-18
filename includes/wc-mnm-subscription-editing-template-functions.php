@@ -20,9 +20,9 @@ if ( ! function_exists( 'wc_mnm_template_edit_variable_container_order_item' ) )
 	 * @param WC_Product_Mix_and_Match
 	 * @param WC_Order_Item $order_item
 	 * @param WC_Order $order
-	 * @param  string $context The originating source loading this template
+	 * @param  string $source The originating source loading this template
 	 */
-	function wc_mnm_template_edit_variable_container_order_item( $product, $order_item, $order, $context ) {
+	function wc_mnm_template_edit_variable_container_order_item( $product, $order_item, $order, $source ) {
 
 		global $product;
 
@@ -63,7 +63,7 @@ if ( ! function_exists( 'wc_mnm_template_edit_variable_container_order_item' ) )
 				'attributes'           => $product->get_variation_attributes(),
 				'selected_attributes'  => $product->get_default_attributes(),
 				'classes'              => $classes,
-				'context'              => $context,
+				'source'               => $source,
 			),
 			'',
 			WC_MNM_Subscription_Editing::plugin_path() . '/templates/'
@@ -80,11 +80,11 @@ if ( ! function_exists( 'wc_mnm_template_edit_container_button' ) ) {
 	 * @param WC_Mix_and_Match_Product $product
 	 * @param WC_Order_Item $order_item
 	 * @param WC_Order $order
-	 * @param  string $context The originating source loading this template
+	 * @param  string $source The originating source loading this template
 	 */
-	function wc_mnm_template_edit_container_button( $product, $order_item, $order, $context ) {
+	function wc_mnm_template_edit_container_button( $product, $order_item, $order, $source ) {
 
-		if ( $context === 'myaccount' ) {
+		if ( $source === 'myaccount' ) {
 
 			// Load the edit container template.
 			wc_get_template(
@@ -109,11 +109,11 @@ if ( ! function_exists( 'wc_mnm_template_edit_subscription_heading' ) ) {
 	 * @param WC_Mix_and_Match_Product $product
 	 * @param WC_Order_Item $order_item
 	 * @param WC_Order $order
-	 * @param  string $context The originating source loading this template
+	 * @param  string $source The originating source loading this template
 	 */
-	function wc_mnm_template_edit_subscription_heading( $product, $order_item, $order, $context) {
+	function wc_mnm_template_edit_subscription_heading( $product, $order_item, $order, $source) {
 
-		if ( $context === 'myaccount' ) {
+		if ( $source === 'myaccount' ) {
 			echo '<h3>' . sprintf( esc_html__( 'Edit selections for "%s"', 'wc-mnm-subscription-editing' ), $product->get_name() ) . '</h3>';
 		}
 		
@@ -127,11 +127,11 @@ if ( ! function_exists( 'wc_mnm_template_edit_cancel_link' ) ) {
 	 * @param WC_Mix_and_Match_Product $product
 	 * @param WC_Order_Item $order_item
 	 * @param WC_Order $order
-	 * @param  string $context The originating source loading this template
+	 * @param  string $source The originating source loading this template
 	 */
-	function wc_mnm_template_edit_cancel_link( $product, $order_item, $order, $context ) {
+	function wc_mnm_template_edit_cancel_link( $product, $order_item, $order, $source ) {
 
-		if ( $context === 'myaccount' ) {
+		if ( $source === 'myaccount' ) {
 			// translators: %1$s Screen reader text opening <span> %2$s Product title %3$s Closing </span>
 			$cancel_text = sprintf( esc_html_x( 'Cancel edit %1$soptions for %2$s%3$s', 'edit subscription cancel link text', 'wc-mnm-subscription-editing' ),
 				'<span class="screen-reader-text">',

@@ -30,11 +30,11 @@ $variations_attr = function_exists( 'wc_esc_json' ) ? wc_esc_json( $variations_j
 /**
  * wc_mnm_before_edit_container_form hook.
  */
-do_action( 'wc_mnm_before_edit_container_order_item_form', $product, $order_item, $order, $context );
+do_action( 'wc_mnm_before_edit_container_order_item_form', $product, $order_item, $order, $source );
 ?>
 <form class="<?php echo 'layout_' . esc_attr( $product->get_layout() ); ?> <?php echo esc_attr( implode( ' ', $classes ) ); ?>" action="<?php echo esc_url( apply_filters( 'wc_mnm_edit_container_order_item_form_action', '' ) ); ?>" method="post" enctype="multipart/form-data" data-product_id="<?php echo absint( $product->get_id() ); ?>" data-product_variations="<?php echo $variations_attr; // WPCS: XSS ok. ?>">
 
-	<?php do_action( 'wc_mnm_edit_container_order_item_before_variations_form', $product, $order_item, $order, $context ); ?>
+	<?php do_action( 'wc_mnm_edit_container_order_item_before_variations_form', $product, $order_item, $order, $source ); ?>
 
 	<?php if ( empty( $available_variations ) && false !== $available_variations ) : ?>
 		<p class="stock out-of-stock"><?php echo esc_html( apply_filters( 'woocommerce_out_of_stock_message', __( 'This product is currently out of stock and unavailable.', 'wc-mnm-subscription-editing' ) ) ); ?></p>
@@ -77,7 +77,7 @@ do_action( 'wc_mnm_before_edit_container_order_item_form', $product, $order_item
 				</tbody>
 			</table>
 			
-			<?php do_action( 'wc_mnm_edit_container_order_item_after_variations_table', $product, $order_item, $order, $context ); ?>
+			<?php do_action( 'wc_mnm_edit_container_order_item_after_variations_table', $product, $order_item, $order, $source ); ?>
 
 		<?php endif; ?>
 
@@ -89,7 +89,7 @@ do_action( 'wc_mnm_before_edit_container_order_item_form', $product, $order_item
 		/**
 		 * Hook: wc_mnm_edit_container_order_item_before_single_variation.
 		 */
-		do_action( 'wc_mnm_edit_container_order_item_before_single_variation', $product, $order_item, $order, $context );
+		do_action( 'wc_mnm_edit_container_order_item_before_single_variation', $product, $order_item, $order, $source );
 
 		/**
 		 * Hook: wc_mnm_edit_container_order_item_single_variation. Used to output the cart button and placeholder for variation data.
@@ -98,17 +98,17 @@ do_action( 'wc_mnm_before_edit_container_order_item_form', $product, $order_item
 		 * @hooked wc_mnm_template_single_variation - 15 Empty div for mnm variation data.
 		 * @hooked wc_mnm_template_edit_container_button - 20 Update cart button.
 		 */
-		do_action( 'wc_mnm_edit_container_order_item_single_variation', $product, $order_item, $order, $context );
+		do_action( 'wc_mnm_edit_container_order_item_single_variation', $product, $order_item, $order, $source );
 
 		/**
 		 * Hook: wc_mnm_edit_container_order_item_after_single_variation.
 		 */
-		do_action( 'wc_mnm_edit_container_order_item_after_single_variation', $product, $order_item, $order, $context );
+		do_action( 'wc_mnm_edit_container_order_item_after_single_variation', $product, $order_item, $order, $source );
 
 	?>
 	</div>
 
-	<?php do_action( 'wc_mnm_edit_container_order_item_after_variations_form', $product, $order_item, $order, $context ); ?>
+	<?php do_action( 'wc_mnm_edit_container_order_item_after_variations_form', $product, $order_item, $order, $source ); ?>
 
 </form>
 
@@ -116,5 +116,5 @@ do_action( 'wc_mnm_before_edit_container_order_item_form', $product, $order_item
 /**
  * wc_mnm_after_edit_container_order_item_form hook.
  */
-do_action( 'wc_mnm_after_edit_container_order_item_form', $product, $order_item, $order, $context );
+do_action( 'wc_mnm_after_edit_container_order_item_form', $product, $order_item, $order, $source );
 ?>

@@ -241,11 +241,11 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		 * @param  WC_Order_Item_Product  $new_order_item
 		 * @param  WC_Order_Item_Product  $order_item - the old order item.
 		 * @param  $subscription      WC_Subscription
-		 * @param  string $context The originating source loading this template
+		 * @param  string $source The originating source loading this template
 		 */
-		public static function add_order_note( $container_item, $old_container_item, $subscription, $context ) {
+		public static function add_order_note( $container_item, $old_container_item, $subscription, $source ) {
 
-			if ( $subscription instanceof WC_Subscription && 'myaccount' === $context ) {
+			if ( $subscription instanceof WC_Subscription && 'myaccount' === $source ) {
 
 				if ( $container_item->get_variation_id() !== $old_container_item->get_variation_id() ) {
 					$subscription->add_order_note( sprintf( esc_html__( 'Customer switched variation subscription from "%1$s" to "%2$s" via the My Account page.', 'wc-mnm-subscription-editing' ), $old_container_item->get_name(), $container_item->get_name() ) );
@@ -263,10 +263,10 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		 * @param obj WC_Product $product
 		 * @param obj WC_Order_Item
 		 * @param obj WC_Order
-		 * @param  string $context The originating source loading this template
+		 * @param  string $source The originating source loading this template
 		 * @return WC_Product
 		 */
-		public static function switch_variation( $product, $container_item, $subscription, $context ) {
+		public static function switch_variation( $product, $container_item, $subscription, $source ) {
 
 			// Detect a variation switch.
 			if ( ! empty ( $_POST[ 'variation_id' ] ) && intval( $_POST[ 'variation_id' ] ) !== $container_item->get_variation_id() ) {
@@ -500,11 +500,11 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		 * @param  $product  WC_Product_Mix_and_Match
 		 * @param  $order_item WC_Order_Item
 		 * @param  $order      WC_Order
-		 * @param  string $context The originating source loading this template
+		 * @param  string $source The originating source loading this template
 		 */
-		public static function attach_hooks( $product, $order_item, $order, $context ) {
+		public static function attach_hooks( $product, $order_item, $order, $source ) {
 
-			if ( 'myaccount' === $context ) {
+			if ( 'myaccount' === $source ) {
 
 				// Store the order item' variation ID for later.
 				self::set_current_variation_id( $order_item->get_variation_id() );
