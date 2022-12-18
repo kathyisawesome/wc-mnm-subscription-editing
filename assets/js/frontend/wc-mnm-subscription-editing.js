@@ -98,12 +98,9 @@
 								// Re-attach the replaced result div.
 								let $result = $editRow.find( '.wc-mnm-edit-container' );
 
-								$result.find( '.cart' ).each( function() {
-									if ( $(this).hasClass( 'variable_mnm_form' ) ) {
-										$(this).wc_mnm_variation_form();
-									} else if ( $(this).hasClass( 'mnm_form' ) ) {
-										$(this).wc_mnm_form();
-									}
+								$result.find( 'form' ).each( function() {
+									let type = $(this).hasClass( 'variable_mnm_form' ) ? 'variable-mix-and-match' : 'mix-and-match';
+									$(this).trigger( `wc-mnm-initialize.${type}` );
 								} );
 
 							}
