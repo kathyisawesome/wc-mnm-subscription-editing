@@ -40,6 +40,7 @@ if ( ! function_exists( 'wc_mnm_template_edit_variable_container_order_item' ) )
 			'cart',
 			'cart_group',
 			'edit_container',
+			'layout_' . $product->get_layout(),
 		);
 
 		/**
