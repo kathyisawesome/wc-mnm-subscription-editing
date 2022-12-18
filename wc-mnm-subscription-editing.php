@@ -510,8 +510,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 				// Store the order item' variation ID for later.
 				self::set_current_variation_id( $order_item->get_variation_id() );
 
-				add_filter( 'wc_mnm_container_data_attributes', [ __CLASS__, 'update_container_data_attributes' ], 20 );
-
 				// Change button texts and validation context.
 				add_filter( 'wc_mnm_edit_container_button_text', [ __CLASS__, 'update_container_text' ] );
 			
@@ -528,19 +526,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		public static function update_container_text( $text = '' ) {
 			return esc_html__( 'Update subscription', 'wc-mnm-subscription-editing' );
 		}
-
-		/**
-		 * Modify container attributes.
-		 * 
-		 * @param  string $text
-		 * @return string
-		 */
-		public static function update_container_data_attributes( $atts ) {
-			$atts['context'] = 'edit';
-			$atts['button_text'] = self::update_container_text();
-			return $atts;
-		}
-
 	
 		/*-----------------------------------------------------------------------------------*/
 		/* Variable Mix and Match                                                            */
