@@ -99,7 +99,7 @@
 								let $result = $editRow.find( '.wc-mnm-edit-container' );
 
 								$result.find( 'form' ).each( function() {
-									let type = $(this).hasClass( 'variable_mnm_form' ) ? 'variable-mix-and-match' : 'mix-and-match';
+									let type = $(this).data( 'product_type' ) || 'mix-and-match';
 									$(this).trigger( `wc-mnm-initialize.${type}` );
 								} );
 

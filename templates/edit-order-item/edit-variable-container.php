@@ -32,7 +32,7 @@ $variations_attr = function_exists( 'wc_esc_json' ) ? wc_esc_json( $variations_j
  */
 do_action( 'wc_mnm_before_edit_container_order_item_form', $product, $order_item, $order, $source );
 ?>
-<form class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>" data-validation_context="edit" action="<?php echo esc_url( apply_filters( 'wc_mnm_edit_container_order_item_form_action', '' ) ); ?>" method="post" enctype="multipart/form-data" data-product_id="<?php echo absint( $product->get_id() ); ?>" data-product_variations="<?php echo $variations_attr; // WPCS: XSS ok. ?>">
+<form class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>" data-product_type="<?php echo esc_attr( $product->get_type() ); ?>" data-validation_context="edit" action="<?php echo esc_url( apply_filters( 'wc_mnm_edit_container_order_item_form_action', '' ) ); ?>" method="post" enctype="multipart/form-data" data-product_id="<?php echo absint( $product->get_id() ); ?>" data-product_variations="<?php echo $variations_attr; // WPCS: XSS ok. ?>">
 
 	<?php do_action( 'wc_mnm_edit_container_order_item_before_variations_form', $product, $order_item, $order, $source ); ?>
 
