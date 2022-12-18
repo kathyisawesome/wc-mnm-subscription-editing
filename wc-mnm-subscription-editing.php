@@ -176,6 +176,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 				.woocommerce-MyAccount-content.wc-mnm-subscription-editing .order_details tfoot {
 					opacity: 30%;
 				}
+				.woocommerce-MyAccount-content.wc-mnm-subscription-editing .layout_grid .product-thumbnail { max-width: 100%; }
 			";
 			wp_add_inline_style( 'wc-mnm-frontend', $custom_css );
 
