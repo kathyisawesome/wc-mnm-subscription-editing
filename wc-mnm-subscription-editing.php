@@ -270,7 +270,11 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			if ( $subscription instanceof WC_Subscription && 'myaccount' === $context ) {
 				// Get new order items fragment.
 				ob_start();
-				WCS_Template_Loader::get_subscription_totals_table_template( $subscription, true, $subscription->get_order_item_totals() );
+
+				$include_item_removal_links = wcs_can_items_be_removed( $subscription );
+				$totals                     = $subscription->get_order_item_totals();
+
+				WCS_Template_Loader::get_subscription_totals_table_template( $subscription, $include_item_removal_links, $totals );
 				$fragments[ 'table.order_details' ] = ob_get_clean();
 			}
 
