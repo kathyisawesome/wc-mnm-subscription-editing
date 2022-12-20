@@ -103,7 +103,7 @@
 
 								$result.find( 'form' ).each( function() {
 									let type = $(this).data( 'product_type' ) || 'mix-and-match';
-									$(this).trigger( `wc-mnm-initialize.${type}` );
+									$(this).trigger( `wc-mnm-initialize.${type}` ).data( 'source', 'myaccount' );
 								} );
 
 							}
