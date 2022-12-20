@@ -47,12 +47,13 @@
 
 			let subscription_id = url.searchParams.get( 'switch-subscription' );
 			let item_id         = url.searchParams.get( 'item' );
+			let variation_id    = url.searchParams.get( 'variation_id' );
 
-			let $content      = $( '.woocommerce-MyAccount-content' );
-			let $tbody        = $content.find( '.shop_table.order_details tbody' );
-			let $containerRow = $(this).closest( '.mnm_table_container' );
-			let $all_rows     = $containerRow.nextAll( '.mnm_table_item' ).addBack();
-			let columns       = $containerRow.find( 'td' ).length;
+			let $content        = $( '.woocommerce-MyAccount-content' );
+			let $tbody          = $content.find( '.shop_table.order_details tbody' );
+			let $containerRow   = $(this).closest( '.mnm_table_container' );
+			let $all_rows       = $containerRow.nextAll( '.mnm_table_item' ).addBack();
+			let columns         = $containerRow.find( 'td' ).length;
 
 			// If currently processing... or clicking on same item, quit now.
 			if ( $tbody.is( '.processing' ) ) {
@@ -69,13 +70,15 @@
 			}
 
 			$.ajax( {
+
 				url: wc_mnm_subscription_editing_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'mnm_get_edit_container_order_item_form' ),
 				type: 'POST',
 				data: {
-					item_id : item_id,
-					order_id: subscription_id,
-					security: wc_mnm_subscription_editing_params.edit_container_nonce,
-					source  : 'myaccount'
+					item_id     : item_id,
+					order_id    : subscription_id,
+					variation_id: variation_id,
+					security    : wc_mnm_subscription_editing_params.edit_container_nonce,
+					source      : 'myaccount'
 				},
 				success: function( response ) {
 

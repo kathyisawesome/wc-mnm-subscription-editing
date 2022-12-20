@@ -43,11 +43,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		private static $is_enqueued = false;
 
 		/**
-		 * var int $current_variation_id
-		 */
-		private static $current_variation_id = 0;
-
-		/**
 		 * WC_MNM_Subscription_Editing Constructor
 		 *
 		 * @access 	public
@@ -96,7 +91,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 			// Adjust core ajax.
 			add_action( 'wc_mnm_editing_container_in_order', [ __CLASS__, 'add_order_note' ], 10, 4 );
-			add_filter( 'wc_mnm_get_product_from_edit_order_item', [ __CLASS__, 'switch_variation' ], 10, 4 );
 			add_filter( 'wc_mnm_updated_container_in_shop_subscription_fragments', [ __CLASS__, 'updated_subscription_fragments' ], 10, 4 );
 
 			// Frontend display.
@@ -111,7 +105,10 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 			// Variable Mix and Match performance boosts.
 			add_filter( 'wc_mnm_eager_load_variations', [ __CLASS__, 'eager_load_variations' ] );
-			add_filter( 'woocommerce_available_variation', [ __CLASS__, 'available_variation' ], 10, 3 );
+
+			// Front-end customer facing callbacks for editing.
+			add_action( 'wc_ajax_mnm_get_edit_container_order_item_form', [ 'WC_MNM_Ajax', 'edit_container_order_item_form' ] );
+			add_action( 'wc_ajax_mnm_update_container_order_item', [ 'WC_MNM_Ajax' , 'update_container_order_item' ] );
 
 		}
 
@@ -255,26 +252,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 				}
 				
 			}
-
-		}
-
-		/**
-		 * Preserve subscription switch args.
-		 * 
-		 * @param obj WC_Product $product
-		 * @param obj WC_Order_Item
-		 * @param obj WC_Order
-		 * @param  string $source The originating source loading this template
-		 * @return WC_Product
-		 */
-		public static function switch_variation( $product, $container_item, $subscription, $source ) {
-
-			// Detect a variation switch.
-			if ( ! empty ( $_POST[ 'variation_id' ] ) && intval( $_POST[ 'variation_id' ] ) !== $container_item->get_variation_id() ) {
-				$product = wc_get_product( intval( $_POST[ 'variation_id' ] ) );
-			}
-
-			return $product;
 
 		}
 
@@ -507,9 +484,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 			if ( 'myaccount' === $source ) {
 
-				// Store the order item' variation ID for later.
-				self::set_current_variation_id( $order_item->get_variation_id() );
-
 				// Change button texts and validation context.
 				add_filter( 'wc_mnm_edit_container_button_text', [ __CLASS__, 'update_container_text' ] );
 			
@@ -538,62 +512,12 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		 */
 		public static function eager_load_variations( $eager_load ) {
 			return doing_action( 'wc_ajax_mnm_get_edit_container_order_item_form' ) ? false : $eager_load;
-		}
-
-		
-		/**
-		 * Add HTML to variation data.
-		 * 
-		 * @param array $data
-		 * @param WC_Product_Variable_Mix_and_Match
-		 * @param WC_Product_Mix_and_Match_Variation
-		 */
-		public static function available_variation( $data, $product, $variation ) {
-
-			if ( 
-				$variation->is_type( 'mix-and-match-variation' )
-				&& $product->is_type( 'variable-mix-and-match' )
-				&& doing_action( 'wc_ajax_mnm_get_edit_container_order_item_form' )
-				&& self::get_current_variation_id() === $variation->get_id() ) {
-					$data[ 'mix_and_match_html' ] = WC_MNM_Variable::get_instance()->get_variation_template_html( $variation );
-			}
-
-			return $data;
-
-		}			
+		}		
 				
 
 		/*-----------------------------------------------------------------------------------*/
 		/* Helpers                                                                           */
 		/*-----------------------------------------------------------------------------------*/
-
-
-		/**
-		 * Get the current order item ID.
-		 *
-		 * @return string
-		 */
-		public static function get_current_variation_id() {
-			return self::$current_variation_id;
-		}
-		
-		/**
-		 * Set the current order item ID.
-		 *
-		 * @return string
-		 */
-		public static function set_current_variation_id( $id ) {
-			self::$current_variation_id = intval( $id );
-		}
-
-		/**
-		 * Clear the current order item ID.
-		 *
-		 * @return string
-		 */
-		public static function clear_current_variation_id() {
-			self::$current_variation_id = 0;
-		}
 
 		/**
 		 * Get the plugin path.

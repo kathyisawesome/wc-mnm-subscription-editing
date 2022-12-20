@@ -16,9 +16,7 @@ add_action( 'wc_mnm_before_edit_container_order_item_form', 'wc_mnm_template_edi
 add_action( 'wc_mnm_edit_container_order_item_content', 'wc_mnm_template_edit_container_button', 40, 4 );
 add_action( 'wc_mnm_edit_container_order_item_content', 'wc_mnm_template_edit_cancel_link', 50, 4 );
 
-// Port variation add to cart elements.
-add_action( 'wc_mnm_edit_container_order_item_single_variation', 'woocommerce_single_variation', 10 );
-add_action( 'wc_mnm_edit_container_order_item_single_variation', 'wc_mnm_template_single_variation', 15 );
-add_action( 'wc_mnm_edit_container_order_item_single_variation', 'wc_mnm_template_edit_container_button', 20, 4 );
-add_action( 'wc_mnm_edit_container_order_item_single_variation', 'wc_mnm_template_edit_cancel_link', 30, 4 );
+// Add elements to edit form.
+add_action( 'wc_mnm_edit_container_order_item_single_variation', 'wc_mnm_template_edit_container_button', 30, 4 );
+add_action( 'wc_mnm_edit_container_order_item_single_variation', 'wc_mnm_template_edit_cancel_link', 40, 4 );
 
