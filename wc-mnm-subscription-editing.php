@@ -89,8 +89,10 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			// Display Scripts.
 			add_action( 'woocommerce_account_view-subscription_endpoint', [ __CLASS__, 'attach_listener_for_scripts' ], 1 );
 
-			// Adjust core ajax.
-			add_action( 'wc_mnm_editing_container_in_order', [ __CLASS__, 'add_order_note' ], 10, 4 );
+			// Add note when customer makes changes.
+			add_action( 'wc_mnm_editing_container_in_shop_subscription', [ __CLASS__, 'add_order_note' ], 10, 4 );
+
+			// Add custom fragment.
 			add_filter( 'wc_mnm_updated_container_in_shop_subscription_fragments', [ __CLASS__, 'updated_subscription_fragments' ], 10, 4 );
 
 			// Frontend display.
