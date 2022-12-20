@@ -31,7 +31,7 @@
 
 			$( document.body).on( 'wc_mnm_scroll_to_variation', function() { return false; } );
 
-			$( '.woocommerce-MyAccount-content' ).on( 'wc_mnm_variation_found.wc-mnm-subscription-editing', '.variable_mnm_form', this.onFoundVariation );
+			$( '.woocommerce-MyAccount-content' ).on( 'wc_mnm_variation_form_loaded.wc-mnm-subscription-editing', '.variable_mnm_form', this.onFoundVariation );
 			
 		};
 
