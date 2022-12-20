@@ -95,6 +95,9 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			// Add custom fragment.
 			add_filter( 'wc_mnm_updated_container_in_shop_subscription_fragments', [ __CLASS__, 'updated_subscription_fragments' ], 10, 4 );
 
+			// Update totals when customer edits contents.
+			add_action( 'wc_mnm_updated_container_in_shop_subscription', [ __CLASS__, 'update_subscription_totals' ], 10, 4 );
+
 			// Frontend display.
 			if ( version_compare( WC_Subscriptions::$version, '4.5.0', '>=' ) ) {
 				add_filter( 'woocommerce_subscriptions_switch_link_classes', [ __CLASS__, 'switch_link_classes' ], 10, 4 );
@@ -410,6 +413,31 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			
 			wp_die();
 
+		}
+
+
+
+		/**
+		 * Update subscription totals.
+		 * 
+		 * @param  WC_Order_Item_Product  $container_item
+		 * @param  WC_Order               $subscription
+		 * @param  string $source The originating source loading this template
+		 */
+		public static function update_subscription_totals( $container_item, $subscription, $context ) {
+			if ( $subscription instanceof WC_Subscription && 'myaccount' === $context ) {
+
+				/**
+				 * 
+				 * Woo Core seems to prefer this method:
+				 * $order->calculate_taxes( $calculate_tax_args );
+				 * $order->calculate_totals( false );
+				 * $order->save();
+				 * 
+				 * However, getting the taxable address is difficult since $order->get_taxable_address() is a protected method.
+				 */
+				$subscription->calculate_totals( true );
+			}
 		}
 
 
