@@ -114,6 +114,12 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			// Variable Mix and Match performance boosts.
 			add_filter( 'wc_mnm_eager_load_variations', [ __CLASS__, 'eager_load_variations' ] );
 
+			// Reapply variable product yschemes from order item.
+			add_filter( 'wc_mnm_get_product_from_edit_order_item', [ __CLASS__, 'reapply_schemes' ], 100, 4 );
+
+			// Restore the subscription state of a product fetched via ajax, using an order item as reference.
+			add_filter( 'wc_mnm_get_ajax_product_variation', array( __CLASS__, 'reapply_variation_schemes' ) );
+
 			// Front-end customer facing callbacks for editing.
 			add_action( 'wc_ajax_mnm_get_edit_container_order_item_form', [ 'WC_MNM_Ajax', 'edit_container_order_item_form' ] );
 			add_action( 'wc_ajax_mnm_update_container_order_item', [ 'WC_MNM_Ajax' , 'update_container_order_item' ] );
@@ -432,7 +438,64 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		public static function eager_load_variations( $eager_load ) {
 			return doing_action( 'wc_ajax_mnm_get_edit_container_order_item_form' ) ? false : $eager_load;
 		}		
-				
+	
+		/**
+		 * Reapply schemes to parent product.
+		 * 
+		 * @since 2.3.0
+		 * 
+		 * @param obj WC_Product $product
+		 * @param obj WC_Order_Item
+		 * @param obj WC_Order
+		 * @param  string $source The originating source loading this template
+		 * @return WC_Product
+		 */
+		public static function reapply_schemes( $product, $order_item, $order, $source ) {
+
+			$scheme_key = $scheme_key = WCS_ATT_Order::get_subscription_scheme( $order_item, array(
+				'product'   => $product,
+				'order'     => $order,
+			) );
+
+			// Set scheme on product object for later reference.
+			if ( null !== $scheme_key ) {
+				WCS_ATT_Product_Schemes::set_subscription_scheme( $product, $scheme_key );
+			}
+
+			return $product;
+
+		}	
+
+
+		/**
+		 * Attempts to restore the subscription state of a variation fetched via ajax, using an order item as reference.
+		 *
+		 * @param  WC_Product  $product
+		 * @return WC_Product
+		 */
+		public static function reapply_variation_schemes( $product ) {
+
+			if ( isset( $_POST['extra_data'] ) ) {
+
+				if ( isset( $_POST['extra_data'] ) && isset( $_POST['extra_data']['order_item_id' ] ) ) {
+					
+					$order_item = new WC_Order_Item_Product( intval( $_POST['extra_data']['order_item_id' ] ) );
+
+					$scheme_key = $scheme_key = WCS_ATT_Order::get_subscription_scheme( $order_item, array(
+						'product'   => $product,
+					) );
+
+					if ( null !== $scheme_key ) {
+						WCS_ATT_Product_Schemes::set_subscription_scheme( $product, $scheme_key );
+					}
+
+				}
+
+			}
+
+			return $product;
+		}
+
 
 		/*-----------------------------------------------------------------------------------*/
 		/* Helpers                                                                           */
