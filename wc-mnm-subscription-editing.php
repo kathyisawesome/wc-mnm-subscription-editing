@@ -11,6 +11,11 @@
  * Text Domain: wc-mnm-subscription-editing
  * Domain Path: /languages
  * 
+ * WC requires at least: 7.0.0
+ * WC tested up to: 7.3.0
+ * Requires at least: 6.0.0
+ * Requires PHP: 7.2
+ * 
  * GitHub Plugin URI: https://github.com/kathyisawesome/wc-mnm-subscription-editing
  * Primary Branch: trunk
  * Release Asset: true
