@@ -121,9 +121,12 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			// Restore the subscription state of a product fetched via ajax, using an order item as reference.
 			add_filter( 'wc_mnm_get_ajax_product_variation', array( __CLASS__, 'reapply_variation_schemes' ) );
 
+			// Tell APFS that we have forced subscription.
+			add_action( 'wc_ajax_mnm_get_edit_container_order_item_form', [ __CLASS__, 'set_forced_subscription' ], 0 );
+
 			// Front-end customer facing callbacks for editing.
 			add_action( 'wc_ajax_mnm_get_edit_container_order_item_form', [ 'WC_MNM_Ajax', 'edit_container_order_item_form' ] );
-			add_action( 'wc_ajax_mnm_update_container_order_item', [ 'WC_MNM_Ajax' , 'update_container_order_item' ] );
+			add_action( 'wc_ajax_mnm_update_container_order_item', [ 'WC_MNM_Ajax' , 'update_container_order_item' ] );	
 
 		}
 
@@ -447,8 +450,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		/**
 		 * Reapply schemes to parent product.
 		 * 
-		 * @since 2.3.0
-		 * 
 		 * @param obj WC_Product $product
 		 * @param obj WC_Order_Item
 		 * @param obj WC_Order
@@ -501,6 +502,14 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			return $product;
 		}
 
+		/**
+		 * Trick APFS into thinking the edited subscription only has forced-subscription, and one-time purchase is not available.
+		 * This lets APFS handle display of subscription strings in the editing mode.
+		 */
+		public static function set_forced_subscription() {
+			add_filter( 'wcsatt_force_subscription', '__return_true' );
+		}
+		
 
 		/*-----------------------------------------------------------------------------------*/
 		/* Helpers                                                                           */
