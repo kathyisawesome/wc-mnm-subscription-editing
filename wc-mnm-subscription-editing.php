@@ -12,6 +12,7 @@
  * Domain Path: /languages
  * 
  * GitHub Plugin URI: https://github.com/kathyisawesome/wc-mnm-subscription-editing
+ * Primary Branch: trunk
  * Release Asset: true
  *
  * Copyright: © 2022 Kathy Darling
