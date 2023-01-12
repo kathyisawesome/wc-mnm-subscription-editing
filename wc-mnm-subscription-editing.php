@@ -316,8 +316,12 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 				 * $order->save();
 				 * 
 				 * However, getting the taxable address is difficult since $order->get_taxable_address() is a protected method.
+				 * 
+				 * $subscription->calculate_totals( true ) The true param trigger save() however it still leaves out reapplying any coupons.
+				 * $subscription->recalculate_coupons() reapplies coupons, recalculates taxes, and saves. It's probably expensive, but it does get everything udpated.
 				 */
-				$subscription->calculate_totals( true );
+
+				$subscription->recalculate_coupons();
 			}
 		}
 
