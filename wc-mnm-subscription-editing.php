@@ -2,7 +2,7 @@
 /**
  * Plugin URI: http://www.github.com/kathyisawesome/wc-mnm-subscription-editing
  * Plugin Name: WooCommerce Mix and Match - Subscription Editing
- * Version: 1.0.0-rc.2
+ * Version: 1.0.0-rc.3
  * Description: Mix and Match subscription container contents editing in the my account area, no cart/checkout
  * Author: Kathy Darling
  * Author URI: http://kathyisawesome.com/
@@ -35,7 +35,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		/**
 		 * constants
 		 */
-		const VERSION = '1.0.0-rc.2';
+		const VERSION = '1.0.0-rc.3';
 		const REQ_MNM_VERSION = '2.4.0-beta.5';
 
 		/**
