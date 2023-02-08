@@ -129,9 +129,6 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			// Tell APFS that we have forced subscription.
 			add_action( 'wc_ajax_mnm_get_edit_container_order_item_form', [ __CLASS__, 'set_forced_subscription' ], 0 );
 
-			// Front-end customer facing callbacks for editing.
-			add_action( 'wc_ajax_mnm_get_edit_container_order_item_form', [ 'WC_MNM_Ajax', 'edit_container_order_item_form' ] );
-			add_action( 'wc_ajax_mnm_update_container_order_item', [ 'WC_MNM_Ajax' , 'update_container_order_item' ] );	
 
 		}
 
