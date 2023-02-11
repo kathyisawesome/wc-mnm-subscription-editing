@@ -77,9 +77,7 @@ if ( ! function_exists( 'wc_mnm_template_edit_cancel_link' ) ) {
 				'</span>'
 			);
 			echo '<div class="wc-mnm-edit-subscription-actions woocommerce-cart-form">
-					<div class="actions">
-						<button class="button alt wc-mnm-cancel-edit"> ' . wp_kses_post( $cancel_text ) . '</button>
-					</div>
+					<button class="button alt wc-mnm-cancel-edit' . esc_attr( WC_MNM_Core_Compatibility::wp_theme_get_element_class_name( 'button' ) ) .'"> ' . wp_kses_post( $cancel_text ) . '</button>
 				</div>';
 		}
 	}
