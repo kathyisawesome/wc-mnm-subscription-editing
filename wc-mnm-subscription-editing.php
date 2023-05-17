@@ -458,7 +458,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 					
 					$order_item = new WC_Order_Item_Product( intval( $_POST['extra_data']['order_item_id' ] ) );
 
-					$scheme_key = $scheme_key = WCS_ATT_Order::get_subscription_scheme( $order_item, array(
+					$scheme_key = WCS_ATT_Order::get_subscription_scheme( $order_item, array(
 						'product'   => $product,
 					) );
 
