@@ -199,7 +199,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 
 			$script_path = '/assets/js/frontend/wc-mnm-subscription-editing' .  $suffix . '.js';
 
-			wp_register_script( 'wc-mnm-subscription-editing', plugins_url( $script_path, __FILE__ ), array( 'wc-add-to-cart-mnm' ), wc_mix_and_match()->get_file_version( self::plugin_path() . $script_path, self::VERSION ), true );
+			wp_register_script( 'wc-mnm-subscription-editing', plugins_url( $script_path, __FILE__ ), array( 'jquery', 'wc-add-to-cart-mnm', 'jquery-blockui' ), wc_mix_and_match()->get_file_version( self::plugin_path() . $script_path, self::VERSION ), true );
 
 			$params = array(
 				'wc_ajax_url'               => \WC_AJAX::get_endpoint( '%%endpoint%%' ),
@@ -235,6 +235,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 					WC_MNM_Variable::get_instance()->load_scripts();
 				}
 
+				wp_enqueue_script( 'jquery-blockui' );
 				wp_enqueue_script( 'wc-mnm-subscription-editing' );
 
 				self::$is_enqueued = true;
