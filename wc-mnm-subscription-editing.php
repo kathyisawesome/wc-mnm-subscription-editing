@@ -174,6 +174,15 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 				.wc-mnm-edit-container-shop_subscription .mnm_table .product-thumbnail {
 					width: 15%;
 				}
+				.wc-mnm-edit-container-shop_subscription .mnm_form .product-thumbnail a {
+					cursor: default;
+				}
+				.wc-mnm-edit-container-shop_subscription .mnm_form .product-thumbnail a:active,
+				.wc-mnm-edit-container-shop_subscription .mnm_form .product-thumbnail a:focus {
+					border: 0;
+					text-decoration: none;
+					outline: none;
+				}
 				.wc-mnm-edit-container-shop_subscription .mnm_form p {
 					font-size: initial;
 				}
