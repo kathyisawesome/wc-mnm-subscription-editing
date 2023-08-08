@@ -62,13 +62,17 @@
 				return false;
 			} else if ( ! $tbody.is( '.processing' ) ) {
 				$tbody.addClass( 'processing' );
-				$tbody.block( {
-				message: null,
-				overlayCSS: {
-					background: '#fff',
-					opacity: 0.6
+
+				if ( $.isFunction($.fn.block) ) {
+					$tbody.block( {
+						message: null,
+						overlayCSS: {
+							background: '#fff',
+							opacity: 0.6
+						}
+						} );
 				}
-				} );
+				
 			}
 
 			$.ajax( {
