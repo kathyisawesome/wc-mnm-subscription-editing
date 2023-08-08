@@ -86,6 +86,9 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			// Load translation files.
 			add_action( 'init', [ __CLASS__, 'load_plugin_textdomain' ] );
 
+			// Declare HPOS compatibility.
+			add_action( 'before_woocommerce_init', [ __CLASS__, 'declare_hpos_compatibility' ] );
+
 			// Register Scripts.
 			add_action( 'wp_enqueue_scripts', [ __CLASS__, 'register_scripts' ], 20 );
 
@@ -141,6 +144,23 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			echo '<div class="notice notice-error">';
 				echo wpautop( self::$notice );
 			echo '</div>';
+		}
+
+		/*-----------------------------------------------------------------------------------*/
+		/* Core Compat */
+		/*-----------------------------------------------------------------------------------*/
+
+
+		/**
+		 * Declare HPOS (Custom Order tables) compatibility.
+		 */
+		public static function declare_hpos_compatibility() {
+
+			if ( ! class_exists( 'Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+				return;
+			}
+
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', plugin_basename( __FILE__ ), true );
 		}
 
 		/*-----------------------------------------------------------------------------------*/
