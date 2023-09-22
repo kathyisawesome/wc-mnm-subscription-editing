@@ -115,7 +115,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 			add_action( 'wc_mnm_edit_container_order_item_in_shop_subscription', array( __CLASS__, 'attach_hooks' ), 0, 4 );
 
 			// Force variations to hide links.
-			add_action( 'wc_mnm_variation_add_to_cart', [ __CLASS__, 'force_edit_variation_styles' ], 0 );
+			// add_action( 'wc_mnm_variation_add_to_cart', [ __CLASS__, 'force_edit_variation_styles' ], 0 );
 
 			// Variable Mix and Match performance boosts.
 			add_filter( 'wc_mnm_eager_load_variations', [ __CLASS__, 'eager_load_variations' ] );
@@ -430,7 +430,7 @@ if ( ! class_exists( 'WC_MNM_Subscription_Editing' ) ) :
 		public static function force_edit_variation_styles() {
 
 			if ( wp_doing_ajax() && isset( $_POST['source'] ) && 'myaccount' === wc_clean( $_POST['source'] ) ) {
-				add_filter( 'woocommerce_product_is_visible', '__return_false', 9999 );
+				add_filter( 'woocommerce_product_is_visible', '__return_false', 99 );
 			}
 			
 		}
