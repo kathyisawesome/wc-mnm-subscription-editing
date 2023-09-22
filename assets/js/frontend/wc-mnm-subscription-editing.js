@@ -63,14 +63,14 @@
 			} else if ( ! $tbody.is( '.processing' ) ) {
 				$tbody.addClass( 'processing' );
 
-				if ( $.isFunction($.fn.block) ) {
+				if ( typeof $.fn.block === 'function' ) {
 					$tbody.block( {
 						message: null,
 						overlayCSS: {
 							background: '#fff',
 							opacity: 0.6
 						}
-						} );
+					} );
 				}
 				
 			}
